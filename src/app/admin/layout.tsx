@@ -2,7 +2,7 @@ import React from 'react';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 
 export const metadata = {
-  title: 'Admin Console — Fikran Portfolio',
+  title: 'Admin Console — Alvino Albas Portfolio',
 };
 
 export default function AdminLayout({
