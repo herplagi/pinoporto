@@ -40,6 +40,14 @@ export const metadata: Metadata = {
     title: 'Alvino Albas — Full-Stack Developer',
     description: 'Scalable web and mobile engineering with Laravel, Express.js, React Native, and Flutter.',
   },
+  icons: {
+    icon: [
+      { url: '/rick-favicon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/icon.png', sizes: 'any' },
+    ],
+    shortcut: '/rick-favicon.png',
+    apple: '/rick-favicon.png',
+  },
 };
 
 export default function RootLayout({
