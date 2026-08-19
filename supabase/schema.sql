@@ -23,16 +23,20 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
--- Projects Table
+-- Projects Table (with background, core_tech, key_features, screenshots)
 CREATE TABLE IF NOT EXISTS public.projects (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title TEXT NOT NULL,
   slug TEXT UNIQUE NOT NULL,
   summary TEXT NOT NULL,
   description TEXT NOT NULL,
+  background TEXT,
   image_url TEXT,
+  screenshots TEXT[] DEFAULT '{}',
   category TEXT NOT NULL DEFAULT 'Fullstack',
   tags TEXT[] DEFAULT '{}',
+  core_tech TEXT[] DEFAULT '{}',
+  key_features TEXT[] DEFAULT '{}',
   metrics TEXT,
   featured BOOLEAN DEFAULT false,
   live_url TEXT,
@@ -59,7 +63,7 @@ CREATE TABLE IF NOT EXISTS public.experiences (
 CREATE TABLE IF NOT EXISTS public.skills (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
-  category TEXT NOT NULL, -- 'Frontend', 'Backend', 'Mobile', 'Database', 'DevOps & Tools'
+  category TEXT NOT NULL, -- 'Frontend', 'Backend', 'Mobile', 'Database', 'DevOps & Tools', 'Architecture'
   proficiency INT DEFAULT 90, -- 1-100
   icon_name TEXT,
   sort_order INT DEFAULT 0,
@@ -149,7 +153,7 @@ CREATE POLICY "Admin can delete portfolio media"
   USING (bucket_id = 'portfolio-media');
 
 -- ==============================================================================
--- 5. INITIAL SEED DATA (ALVINO ALBAS CV DATA)
+-- 5. INITIAL SEED DATA (ALVINO ALBAS CV DATA WITH PROJECT PROOF & DETAILS)
 -- ==============================================================================
 INSERT INTO public.profiles (
   full_name,
@@ -169,21 +173,47 @@ INSERT INTO public.profiles (
   'Kuranji, Padang, West Sumatra, Indonesia',
   true,
   3,
-  'https://github.com',
+  'https://github.com/alvinoalbas',
   'https://www.linkedin.com/in/alvinoalbas/'
 ) ON CONFLICT DO NOTHING;
 
-INSERT INTO public.projects (title, slug, summary, description, category, tags, metrics, featured, live_url, github_url, sort_order) VALUES
+INSERT INTO public.projects (
+  title, 
+  slug, 
+  summary, 
+  description, 
+  background,
+  category, 
+  tags, 
+  core_tech,
+  key_features,
+  metrics, 
+  featured, 
+  image_url,
+  screenshots,
+  live_url, 
+  github_url, 
+  sort_order
+) VALUES
 (
   'Potongin — Barbershop Marketplace Ecosystem',
   'potongin-marketplace',
   'Multi-platform barbershop marketplace ecosystem with React Native mobile app, React.js admin dashboard, and Express.js REST API.',
   'Engineered an end-to-end booking and service management marketplace. Built an Express.js RESTful API handling authentication and business logic, synchronized a centralized MySQL database across mobile and web platforms, and optimized operations using BPMN process analysis.',
+  'Dikembangkan sebagai Tugas Akhir (Undergraduate Thesis) di Sistem Informasi Universitas Andalas. Proyek ini bertujuan untuk mengatasi inefisiensi sistem pemesanan dan manajemen antrean konvensional pada usaha barbershop dengan menyediakan ekosistem digital terintegrasi antara customer dan pemilik usaha.',
   'Fullstack & Mobile',
   ARRAY['React Native', 'React.js', 'Express.js', 'Node.js', 'MySQL', 'BPMN', 'REST API'],
+  ARRAY['React Native (Mobile Customer App)', 'React.js (Web Admin & Merchant Dashboard)', 'Express.js & Node.js (RESTful API Server)', 'MySQL (Centralized Relational Database)', 'BPMN (Business Process Model & Notation)'],
+  ARRAY['Pemesanan & penjadwalan antrean barbershop secara real-time via aplikasi mobile', 'Dashboard web admin untuk manajemen layanan, harga, capster, dan laporan transaksi', 'Autentikasi aman berbasis token JWT dan sinkronisasi data antar platform mobile & web', 'Analisis dan optimasi alur bisnis menggunakan standar notasi BPMN'],
   'React Native & Web Dashboard',
   true,
-  'https://my-portfolio-omegablue-59.vercel.app/',
+  'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=900&q=80',
+  ARRAY[
+    'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=900&q=80',
+    'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=900&q=80',
+    'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=900&q=80'
+  ],
+  NULL,
   'https://github.com/alvinoalbas',
   1
 ),
@@ -192,11 +222,19 @@ INSERT INTO public.projects (title, slug, summary, description, category, tags, 
   'rememory-photobooth',
   'Collaborative web-based photobooth system for capturing, managing, and rendering digital memories at events.',
   'Co-developed a high-reliability event photobooth application utilizing PHP Laravel and MySQL. Designed normalized database schemas to handle active user sessions, photo metadata, and system logs, alongside building secure backend upload controllers.',
+  'Dikembangkan sebagai proyek kolaboratif independen untuk menghadirkan pengalaman photobooth interaktif berbasis web pada berbagai event/acara. Sistem dirancang untuk menangani penangkapan foto digital, pemilihan template frame, dan pengelolaan metadata foto secara terorganisir.',
   'Fullstack',
   ARRAY['PHP Laravel', 'MySQL', 'JavaScript', 'TailwindCSS', 'REST API'],
+  ARRAY['PHP Laravel (Backend Framework & MVC Controllers)', 'MySQL (Session, Photo Metadata, & Log Storage)', 'JavaScript & TailwindCSS (Interactive Frontend Interface)', 'REST API (Upload handling & Image processing pipelines)'],
+  ARRAY['Antarmuka pengambilan dan pemilihan foto yang responsif dan user-friendly', 'Controller backend efisien untuk menangani upload gambar dan manajemen sesi pengguna', 'Skema database relasional untuk menyimpan metadata foto, timestamp, dan riwayat event', 'Sistem logging untuk memastikan keandalan pemrosesan foto selama event berlangsung'],
   'High-reliability event photo management',
   true,
-  'https://my-portfolio-omegablue-59.vercel.app/',
+  'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80',
+  ARRAY[
+    'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80',
+    'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=900&q=80'
+  ],
+  NULL,
   'https://github.com/alvinoalbas',
   2
 ),
@@ -205,11 +243,19 @@ INSERT INTO public.projects (title, slug, summary, description, category, tags, 
   'semen-padang-leave-system',
   'Enterprise employee leave request and approval portal built from the ground up for PT Semen Padang (SIG Group).',
   'Built a robust web application during internship at PT Semen Padang. Developed secure database schemas in MySQL, translated corporate HR business logic into automated request approval flows, and engineered an intuitive interface using Native PHP and Bootstrap.',
+  'Dikerjakan saat menjalani program magang Web Developer di PT Semen Padang (pabrik semen tertua di Asia Tenggara, anak perusahaan SIG Group). Proyek ini menggantikan proses pengajuan izin/cuti karyawan yang sebelumnya manual menjadi sistem digital enterprise yang terotomatisasi.',
   'Web Applications',
   ARRAY['Native PHP', 'MySQL', 'Bootstrap', 'JavaScript', 'Enterprise IT'],
+  ARRAY['Native PHP (Vanilla Backend Architecture)', 'MySQL (Normalized Enterprise Employee & Leave Database)', 'Bootstrap & CSS (Enterprise Responsive UI)', 'JavaScript (Dynamic Form Validation & Approval State)'],
+  ARRAY['Formulir digital pengajuan cuti dan izin kerja karyawan terstruktur', 'Alur persetujuan bertingkat (approval hierarchy) sesuai regulasi HR PT Semen Padang', 'Validasi kuota sisa cuti tahunan dan rekapitulasi riwayat pengajuan', 'Dashboard rekapitulasi data absensi dan izin untuk tim HR & IT'],
   'Enterprise Leave Portal',
   true,
-  'https://my-portfolio-omegablue-59.vercel.app/',
+  'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=80',
+  ARRAY[
+    'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=80',
+    'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=900&q=80'
+  ],
+  NULL,
   'https://github.com/alvinoalbas',
   3
 ),
@@ -218,11 +264,18 @@ INSERT INTO public.projects (title, slug, summary, description, category, tags, 
   'flutter-mobile-app',
   'Cross-platform mobile application utilizing Flutter and Dart with reactive UI and REST API integration.',
   'Developed cross-platform mobile solutions in Flutter, connecting with external REST services, local SQLite caching, and modern Material Design aesthetics.',
+  'Proyek eksplorasi dan pengembangan aplikasi mobile cross-platform berbasis Flutter/Dart untuk membangun aplikasi mobile yang mulus dengan arsitektur reaktif dan sinkronisasi data.',
   'Mobile',
   ARRAY['Flutter', 'Dart', 'Mobile Dev', 'REST API', 'SQLite'],
+  ARRAY['Dart & Flutter (Cross-platform Framework)', 'SQLite (Local Mobile Caching & Offline Storage)', 'REST API Client (HTTP JSON serialization)', 'Material 3 Design System'],
+  ARRAY['Antarmuka mobile modern dengan animasi transisi yang mulus', 'Penyimpanan lokal untuk dukungan offline menggunakan SQLite', 'Integrasi API backend dengan parsing data JSON yang efisien', 'Kompatibilitas penuh untuk Android dan iOS'],
   'Android & iOS Ready',
   false,
-  'https://my-portfolio-omegablue-59.vercel.app/',
+  'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=900&q=80',
+  ARRAY[
+    'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=900&q=80'
+  ],
+  NULL,
   'https://github.com/alvinoalbas',
   4
 ) ON CONFLICT (slug) DO NOTHING;

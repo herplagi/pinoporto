@@ -5,14 +5,16 @@ import {
   Plus, 
   Trash2, 
   Edit3, 
-  ExternalLink, 
-  Github, 
   Star, 
   Upload, 
   X, 
   Check, 
   AlertCircle,
-  FolderGit2
+  FolderGit2,
+  BookOpen,
+  Cpu,
+  CheckCircle2,
+  ImageIcon
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { getProjects } from '@/lib/data';
@@ -30,10 +32,14 @@ export default function AdminProjectsPage() {
     slug: '',
     summary: '',
     description: '',
+    background: '',
     category: 'Fullstack',
     tags: '',
+    core_tech: '',
+    key_features: '',
     metrics: '',
     image_url: '',
+    screenshots: '',
     live_url: '',
     github_url: '',
     featured: true,
@@ -65,12 +71,16 @@ export default function AdminProjectsPage() {
       slug: '',
       summary: '',
       description: '',
+      background: '',
       category: 'Fullstack',
-      tags: 'Next.js, TypeScript, PostgreSQL',
+      tags: 'React Native, Express.js, MySQL',
+      core_tech: 'React Native (Mobile App)\nExpress.js (Backend API)\nMySQL (Database)',
+      key_features: 'Sistem booking real-time\nDashboard admin web terintegrasi\nAutentikasi aman JWT',
       metrics: '',
       image_url: '',
+      screenshots: '',
       live_url: '',
-      github_url: '',
+      github_url: 'https://github.com/alvinoalbas',
       featured: true,
       sort_order: projects.length + 1,
     });
@@ -84,10 +94,14 @@ export default function AdminProjectsPage() {
       slug: proj.slug,
       summary: proj.summary,
       description: proj.description,
+      background: proj.background || '',
       category: proj.category,
       tags: proj.tags.join(', '),
+      core_tech: (proj.core_tech || []).join('\n'),
+      key_features: (proj.key_features || []).join('\n'),
       metrics: proj.metrics || '',
       image_url: proj.image_url || '',
+      screenshots: (proj.screenshots || []).join('\n'),
       live_url: proj.live_url || '',
       github_url: proj.github_url || '',
       featured: proj.featured,
@@ -111,7 +125,11 @@ export default function AdminProjectsPage() {
     if (!isSupabaseLive) {
       // Mock local object URL for preview
       const previewUrl = URL.createObjectURL(file);
-      setForm((prev) => ({ ...prev, image_url: previewUrl }));
+      setForm((prev) => ({ 
+        ...prev, 
+        image_url: previewUrl,
+        screenshots: prev.screenshots ? `${prev.screenshots}\n${previewUrl}` : previewUrl
+      }));
       setNotification({ type: 'success', message: 'Local image preview selected.' });
       return;
     }
@@ -133,7 +151,12 @@ export default function AdminProjectsPage() {
         .from('portfolio-media')
         .getPublicUrl(filePath);
 
-      setForm((prev) => ({ ...prev, image_url: publicUrlData.publicUrl }));
+      const newUrl = publicUrlData.publicUrl;
+      setForm((prev) => ({ 
+        ...prev, 
+        image_url: prev.image_url || newUrl,
+        screenshots: prev.screenshots ? `${prev.screenshots}\n${newUrl}` : newUrl
+      }));
       setNotification({ type: 'success', message: 'Image uploaded to Supabase Storage!' });
     } catch (err: any) {
       setNotification({ type: 'error', message: err.message || 'Upload failed' });
@@ -151,10 +174,14 @@ export default function AdminProjectsPage() {
       slug: form.slug,
       summary: form.summary,
       description: form.description,
+      background: form.background || null,
       category: form.category,
       tags: form.tags.split(',').map((t) => t.trim()).filter(Boolean),
+      core_tech: form.core_tech.split('\n').map((t) => t.trim()).filter(Boolean),
+      key_features: form.key_features.split('\n').map((t) => t.trim()).filter(Boolean),
       metrics: form.metrics || null,
       image_url: form.image_url || null,
+      screenshots: form.screenshots.split('\n').map((t) => t.trim()).filter(Boolean),
       live_url: form.live_url || null,
       github_url: form.github_url || null,
       featured: form.featured,
@@ -179,7 +206,7 @@ export default function AdminProjectsPage() {
       }
       setSaving(false);
       setModalOpen(false);
-      setNotification({ type: 'success', message: 'Project saved (Local preview state updated)!' });
+      setNotification({ type: 'success', message: 'Project details saved in local state!' });
       return;
     }
 
@@ -232,10 +259,10 @@ export default function AdminProjectsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-surface-border">
         <div>
           <h1 className="font-display text-2xl sm:text-3xl font-bold text-text-primary">
-            Manage Projects
+            Manage Projects &amp; Case Studies
           </h1>
           <p className="text-xs font-mono text-text-secondary mt-1">
-            Add, update, or remove portfolio showcase items
+            Add background, core tech stack, proof screenshots, and deliverables
           </p>
         </div>
 
@@ -315,9 +342,14 @@ export default function AdminProjectsPage() {
                       {t}
                     </span>
                   ))}
-                  {proj.metrics && (
+                  {proj.background && (
                     <span className="text-[10px] font-mono text-brand-emerald">
-                      • {proj.metrics}
+                      • Has Background Context
+                    </span>
+                  )}
+                  {proj.screenshots && proj.screenshots.length > 0 && (
+                    <span className="text-[10px] font-mono text-brand-amber">
+                      • {proj.screenshots.length} Screenshots
                     </span>
                   )}
                 </div>
@@ -328,7 +360,7 @@ export default function AdminProjectsPage() {
                 <button
                   onClick={() => openEditModal(proj)}
                   className="p-2 rounded-lg bg-surface-hover hover:bg-surface-border border border-surface-border text-text-secondary hover:text-text-primary transition-colors"
-                  title="Edit Project"
+                  title="Edit Project Details"
                 >
                   <Edit3 size={15} />
                 </button>
@@ -348,10 +380,10 @@ export default function AdminProjectsPage() {
       {/* Create / Edit Project Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-surface border border-surface-border rounded-2xl p-6 sm:p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto my-8">
+          <div className="bg-surface border border-surface-border rounded-2xl p-6 sm:p-8 w-full max-w-3xl max-h-[90vh] overflow-y-auto my-8">
             <div className="flex items-center justify-between pb-4 border-b border-surface-border mb-6">
               <h2 className="font-display text-lg font-bold text-text-primary">
-                {editingProject ? 'Edit Project' : 'Create New Project'}
+                {editingProject ? 'Edit Project Details & Proof' : 'Create New Project & Case Study'}
               </h2>
               <button
                 onClick={() => setModalOpen(false)}
@@ -372,7 +404,7 @@ export default function AdminProjectsPage() {
                     required
                     value={form.title}
                     onChange={(e) => handleSlugGenerate(e.target.value)}
-                    placeholder="e.g. Aura Intelligence Gateway"
+                    placeholder="e.g. Potongin — Barbershop Marketplace"
                     className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
                   />
                 </div>
@@ -386,7 +418,7 @@ export default function AdminProjectsPage() {
                     required
                     value={form.slug}
                     onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                    placeholder="aura-gateway"
+                    placeholder="potongin-marketplace"
                     className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
                   />
                 </div>
@@ -402,23 +434,24 @@ export default function AdminProjectsPage() {
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
                     className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
                   >
+                    <option value="Fullstack & Mobile">Fullstack &amp; Mobile</option>
                     <option value="Fullstack">Fullstack</option>
-                    <option value="Backend & Systems">Backend &amp; Systems</option>
+                    <option value="Web Applications">Web Applications</option>
+                    <option value="Mobile">Mobile</option>
+                    <option value="Backend">Backend</option>
                     <option value="Frontend">Frontend</option>
-                    <option value="DevOps & Tools">DevOps &amp; Tools</option>
-                    <option value="Open Source">Open Source</option>
                   </select>
                 </div>
 
                 <div className="space-y-1">
                   <label className="block text-xs font-mono text-text-muted">
-                    Metrics / Key Impact (Optional)
+                    Badge / Metrics Tag
                   </label>
                   <input
                     type="text"
                     value={form.metrics}
                     onChange={(e) => setForm({ ...form, metrics: e.target.value })}
-                    placeholder="e.g. 45k req/s · <5ms latency"
+                    placeholder="e.g. React Native & Web Dashboard"
                     className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
                   />
                 </div>
@@ -426,7 +459,7 @@ export default function AdminProjectsPage() {
 
               <div className="space-y-1">
                 <label className="block text-xs font-mono text-text-muted">
-                  Summary (One-liner) *
+                  Short Summary (One-liner for card view) *
                 </label>
                 <input
                   type="text"
@@ -435,6 +468,51 @@ export default function AdminProjectsPage() {
                   onChange={(e) => setForm({ ...form, summary: e.target.value })}
                   placeholder="Short impact-focused summary of the system..."
                   className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
+                />
+              </div>
+
+              {/* Background Section */}
+              <div className="space-y-1 p-3.5 rounded-xl bg-surface-hover border border-surface-border">
+                <label className="block text-xs font-mono text-brand-emerald font-semibold flex items-center gap-1.5">
+                  <BookOpen size={14} />
+                  <span>Project Background &amp; Problem Context</span>
+                </label>
+                <textarea
+                  rows={3}
+                  value={form.background}
+                  onChange={(e) => setForm({ ...form, background: e.target.value })}
+                  placeholder="Explain why this project was initiated, what problem it solved, or thesis/internship background..."
+                  className="w-full px-3 py-2 rounded-lg bg-surface border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald resize-none"
+                />
+              </div>
+
+              {/* Core Tech Stack Section */}
+              <div className="space-y-1 p-3.5 rounded-xl bg-surface-hover border border-surface-border">
+                <label className="block text-xs font-mono text-text-primary font-semibold flex items-center gap-1.5">
+                  <Cpu size={14} className="text-brand-emerald" />
+                  <span>Core Tech Stack &amp; Architectural Roles (1 item per line)</span>
+                </label>
+                <textarea
+                  rows={3}
+                  value={form.core_tech}
+                  onChange={(e) => setForm({ ...form, core_tech: e.target.value })}
+                  placeholder="React Native (Mobile Customer App)&#10;Express.js & Node.js (REST API)&#10;MySQL (Centralized Relational Database)"
+                  className="w-full px-3 py-2 rounded-lg bg-surface border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald resize-none"
+                />
+              </div>
+
+              {/* Key Features Section */}
+              <div className="space-y-1 p-3.5 rounded-xl bg-surface-hover border border-surface-border">
+                <label className="block text-xs font-mono text-text-primary font-semibold flex items-center gap-1.5">
+                  <CheckCircle2 size={14} className="text-brand-amber" />
+                  <span>Key Features &amp; Deliverables (1 item per line)</span>
+                </label>
+                <textarea
+                  rows={3}
+                  value={form.key_features}
+                  onChange={(e) => setForm({ ...form, key_features: e.target.value })}
+                  placeholder="Real-time booking and queue scheduling&#10;Web admin dashboard for merchants&#10;Secure JWT token authentication"
+                  className="w-full px-3 py-2 rounded-lg bg-surface border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald resize-none"
                 />
               </div>
 
@@ -447,81 +525,77 @@ export default function AdminProjectsPage() {
                   rows={3}
                   value={form.description}
                   onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="Architecture details, problem solved, technologies implemented..."
+                  placeholder="Technical overview of implementation, architecture, databases..."
                   className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald resize-none"
                 />
               </div>
 
               <div className="space-y-1">
                 <label className="block text-xs font-mono text-text-muted">
-                  Tech Stack Tags (Comma separated) *
+                  Tech Tags (Comma separated) *
                 </label>
                 <input
                   type="text"
                   required
                   value={form.tags}
                   onChange={(e) => setForm({ ...form, tags: e.target.value })}
-                  placeholder="Next.js 14, TypeScript, Supabase, PostgreSQL"
+                  placeholder="React Native, React.js, Express.js, MySQL, BPMN"
                   className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
                 />
               </div>
 
-              {/* Image Upload / URL */}
-              <div className="space-y-2 p-3.5 rounded-xl bg-surface-hover border border-surface-border">
-                <label className="block text-xs font-mono text-text-primary font-semibold">
-                  Project Image / Screenshot
+              {/* Image Upload & Screenshots */}
+              <div className="space-y-3 p-3.5 rounded-xl bg-surface-hover border border-surface-border">
+                <label className="block text-xs font-mono text-text-primary font-semibold flex items-center gap-1.5">
+                  <ImageIcon size={14} className="text-brand-emerald" />
+                  <span>Project Proofs &amp; Screenshots</span>
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-mono text-text-muted mb-1">
-                      Upload from Computer (Supabase Storage)
-                    </label>
-                    <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-surface border border-surface-border text-xs font-mono text-text-secondary hover:text-text-primary hover:border-brand-emerald transition-all w-full justify-center">
-                      <Upload size={14} className="text-brand-emerald" />
-                      <span>{uploading ? 'Uploading...' : 'Choose Image File'}</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileUpload}
-                        disabled={uploading}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-mono text-text-muted mb-1">
-                      Or Image URL Directly
-                    </label>
+                
+                <div>
+                  <label className="block text-[11px] font-mono text-text-muted mb-1">
+                    Upload Screenshot (to Supabase Storage)
+                  </label>
+                  <label className="cursor-pointer inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-surface border border-surface-border text-xs font-mono text-text-secondary hover:text-text-primary hover:border-brand-emerald transition-all w-full justify-center">
+                    <Upload size={14} className="text-brand-emerald" />
+                    <span>{uploading ? 'Uploading to Supabase...' : 'Upload Image File'}</span>
                     <input
-                      type="url"
-                      value={form.image_url}
-                      onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-                      placeholder="https://images.unsplash.com/..."
-                      className="w-full px-3 py-2 rounded-lg bg-surface border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      disabled={uploading}
+                      className="hidden"
                     />
-                  </div>
+                  </label>
                 </div>
-                {form.image_url && (
-                  <div className="text-[11px] font-mono text-brand-emerald truncate pt-1">
-                    ✓ Image attached: {form.image_url}
-                  </div>
-                )}
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="block text-xs font-mono text-text-muted">
-                    Live Demo URL (Optional)
+                <div>
+                  <label className="block text-[11px] font-mono text-text-muted mb-1">
+                    Primary Cover Image URL
                   </label>
                   <input
                     type="url"
-                    value={form.live_url}
-                    onChange={(e) => setForm({ ...form, live_url: e.target.value })}
-                    placeholder="https://..."
-                    className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
+                    value={form.image_url}
+                    onChange={(e) => setForm({ ...form, image_url: e.target.value })}
+                    placeholder="https://images.unsplash.com/..."
+                    className="w-full px-3 py-2 rounded-lg bg-surface border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
                   />
                 </div>
 
+                <div>
+                  <label className="block text-[11px] font-mono text-text-muted mb-1">
+                    Additional Screenshot Proof URLs (1 URL per line)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={form.screenshots}
+                    onChange={(e) => setForm({ ...form, screenshots: e.target.value })}
+                    placeholder="https://...&#10;https://..."
+                    className="w-full px-3 py-2 rounded-lg bg-surface border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald resize-none"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="block text-xs font-mono text-text-muted">
                     GitHub Repository (Optional)
@@ -530,7 +604,20 @@ export default function AdminProjectsPage() {
                     type="url"
                     value={form.github_url}
                     onChange={(e) => setForm({ ...form, github_url: e.target.value })}
-                    placeholder="https://github.com/..."
+                    placeholder="https://github.com/alvinoalbas/..."
+                    className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-mono text-text-muted">
+                    Live Demo URL (Optional — leave empty if none)
+                  </label>
+                  <input
+                    type="url"
+                    value={form.live_url}
+                    onChange={(e) => setForm({ ...form, live_url: e.target.value })}
+                    placeholder="Leave blank if no live deployment"
                     className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
                   />
                 </div>

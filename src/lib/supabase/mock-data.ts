@@ -4,12 +4,12 @@ export const initialProfile: Profile = {
   id: 'alvino-albas-profile',
   full_name: 'Alvino Albas',
   headline: 'Full-Stack Developer & Information Systems Graduate',
-  bio: 'Information Systems Graduate from Andalas University, specializing in Full-Stack Web & Mobile Development. Experienced in building scalable web and mobile applications using Laravel, Express.js, React Native, React.js, and Flutter.',
+  bio: 'Information Systems Graduate from Andalas University, specializing in Full-Stack Web & Mobile Development. Experienced in building production systems with Laravel, Express.js, React Native, React.js, and Flutter.',
   email: 'alvinoalbas@gmail.com',
   location: 'Kuranji, Padang, West Sumatra, Indonesia',
   avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&h=400&q=80',
   resume_url: '#',
-  github_url: 'https://github.com',
+  github_url: 'https://github.com/alvinoalbas',
   linkedin_url: 'https://www.linkedin.com/in/alvinoalbas/',
   twitter_url: 'https://x.com',
   available_for_hire: true,
@@ -23,13 +23,32 @@ export const initialProjects: Project[] = [
     slug: 'potongin-marketplace',
     summary: 'Multi-platform barbershop marketplace ecosystem with React Native mobile app, React.js admin dashboard, and Express.js REST API.',
     description: 'Engineered an end-to-end booking and service management marketplace. Built an Express.js RESTful API handling authentication and business logic, synchronized a centralized MySQL database across mobile and web platforms, and optimized operations using BPMN process analysis.',
+    background: 'Dikembangkan sebagai Tugas Akhir (Undergraduate Thesis) di Sistem Informasi Universitas Andalas. Proyek ini bertujuan untuk mengatasi inefisiensi sistem pemesanan dan manajemen antrean konvensional pada usaha barbershop dengan menyediakan ekosistem digital terintegrasi antara customer dan pemilik usaha.',
     category: 'Fullstack & Mobile',
     tags: ['React Native', 'React.js', 'Express.js', 'Node.js', 'MySQL', 'BPMN', 'REST API'],
-    metrics: 'React Native App & Web Admin Dashboard',
+    core_tech: [
+      'React Native (Mobile Customer Booking App)',
+      'React.js (Web Admin & Merchant Dashboard)',
+      'Express.js & Node.js (RESTful API Microservices)',
+      'MySQL (Centralized Relational Database & Indexing)',
+      'BPMN (Business Process Model & Notation Optimization)'
+    ],
+    key_features: [
+      'Pemesanan & penjadwalan antrean barbershop secara real-time via aplikasi mobile',
+      'Dashboard web admin untuk manajemen layanan, harga, capster, dan laporan transaksi',
+      'Autentikasi aman berbasis token JWT dan sinkronisasi data antar platform mobile & web',
+      'Analisis dan optimasi alur bisnis menggunakan standar notasi BPMN'
+    ],
+    metrics: 'React Native & Web Dashboard',
     featured: true,
     image_url: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=900&q=80',
-    live_url: 'https://my-portfolio-omegablue-59.vercel.app/',
-    github_url: 'https://github.com',
+    screenshots: [
+      'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=900&q=80'
+    ],
+    live_url: null,
+    github_url: 'https://github.com/alvinoalbas',
     sort_order: 1,
   },
   {
@@ -38,28 +57,62 @@ export const initialProjects: Project[] = [
     slug: 'rememory-photobooth',
     summary: 'Collaborative web-based photobooth system for capturing, managing, and rendering digital memories at events.',
     description: 'Co-developed a high-reliability event photobooth application utilizing PHP Laravel and MySQL. Designed normalized database schemas to handle active user sessions, photo metadata, and system logs, alongside building secure backend upload controllers.',
+    background: 'Dikembangkan sebagai proyek kolaboratif independen untuk menghadirkan pengalaman photobooth interaktif berbasis web pada berbagai event/acara. Sistem dirancang untuk menangani penangkapan foto digital, pemilihan template frame, dan pengelolaan metadata foto secara terorganisir.',
     category: 'Fullstack',
     tags: ['PHP Laravel', 'MySQL', 'JavaScript', 'TailwindCSS', 'REST API'],
-    metrics: 'High-reliability photo ingestion',
+    core_tech: [
+      'PHP Laravel (Backend Framework & MVC Controllers)',
+      'MySQL (Session, Photo Metadata, & Log Storage)',
+      'JavaScript & TailwindCSS (Interactive Frontend Interface)',
+      'REST API (Upload handling & Image processing pipelines)'
+    ],
+    key_features: [
+      'Antarmuka pengambilan dan pemilihan foto yang responsif dan user-friendly',
+      'Controller backend efisien untuk menangani upload gambar dan manajemen sesi pengguna',
+      'Skema database relasional untuk menyimpan metadata foto, timestamp, dan riwayat event',
+      'Sistem logging untuk memastikan keandalan pemrosesan foto selama event berlangsung'
+    ],
+    metrics: 'High-reliability event photo management',
     featured: true,
     image_url: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80',
-    live_url: 'https://my-portfolio-omegablue-59.vercel.app/',
-    github_url: 'https://github.com',
+    screenshots: [
+      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=900&q=80'
+    ],
+    live_url: null,
+    github_url: 'https://github.com/alvinoalbas',
     sort_order: 2,
   },
   {
     id: 'proj-03',
-    title: 'Employee Leave Management System',
+    title: 'Employee Leave Management System (PT Semen Padang)',
     slug: 'semen-padang-leave-system',
     summary: 'Enterprise employee leave request and approval portal built from the ground up for PT Semen Padang (SIG Group).',
     description: 'Developed a robust web application during internship at PT Semen Padang. Built secure database schemas in MySQL, translated corporate HR business logic into automated request approval flows, and engineered an intuitive interface using Native PHP and Bootstrap.',
+    background: 'Dikerjakan saat menjalani program magang Web Developer di PT Semen Padang (pabrik semen tertua di Asia Tenggara, anak perusahaan SIG Group). Proyek ini menggantikan proses pengajuan izin/cuti karyawan yang sebelumnya manual menjadi sistem digital enterprise yang terotomatisasi.',
     category: 'Web Applications',
     tags: ['Native PHP', 'MySQL', 'Bootstrap', 'JavaScript', 'Enterprise IT'],
-    metrics: 'Enterprise Internal Portal',
+    core_tech: [
+      'Native PHP (Vanilla Backend Architecture)',
+      'MySQL (Normalized Enterprise Employee & Leave Database)',
+      'Bootstrap & CSS (Enterprise Responsive UI)',
+      'JavaScript (Dynamic Form Validation & Approval State)'
+    ],
+    key_features: [
+      'Formulir digital pengajuan cuti dan izin kerja karyawan terstruktur',
+      'Alur persetujuan bertingkat (approval hierarchy) sesuai regulasi HR PT Semen Padang',
+      'Validasi kuota sisa cuti tahunan dan rekapitulasi riwayat pengajuan',
+      'Dashboard rekapitulasi data absensi dan izin untuk tim HR & IT'
+    ],
+    metrics: 'Enterprise Leave Portal',
     featured: true,
     image_url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=80',
-    live_url: 'https://my-portfolio-omegablue-59.vercel.app/',
-    github_url: 'https://github.com',
+    screenshots: [
+      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=900&q=80'
+    ],
+    live_url: null,
+    github_url: 'https://github.com/alvinoalbas',
     sort_order: 3,
   },
   {
@@ -68,13 +121,29 @@ export const initialProjects: Project[] = [
     slug: 'flutter-mobile-app',
     summary: 'Cross-platform mobile application utilizing Flutter and Dart with reactive UI and REST API integration.',
     description: 'Developed cross-platform mobile solutions in Flutter, connecting with external REST services, local SQLite caching, and modern Material Design aesthetics.',
+    background: 'Proyek eksplorasi dan pengembangan aplikasi mobile cross-platform berbasis Flutter/Dart untuk membangun aplikasi mobile yang mulus dengan arsitektur reaktif dan sinkronisasi data.',
     category: 'Mobile',
     tags: ['Flutter', 'Dart', 'Mobile Dev', 'REST API', 'SQLite'],
+    core_tech: [
+      'Dart & Flutter (Cross-platform Framework)',
+      'SQLite (Local Mobile Caching & Offline Storage)',
+      'REST API Client (HTTP JSON serialization)',
+      'Material 3 Design System'
+    ],
+    key_features: [
+      'Antarmuka mobile modern dengan animasi transisi yang mulus',
+      'Penyimpanan lokal untuk dukungan offline menggunakan SQLite',
+      'Integrasi API backend dengan parsing data JSON yang efisien',
+      'Kompatibilitas penuh untuk Android dan iOS'
+    ],
     metrics: 'Android & iOS Ready',
     featured: false,
     image_url: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=900&q=80',
-    live_url: 'https://my-portfolio-omegablue-59.vercel.app/',
-    github_url: 'https://github.com',
+    screenshots: [
+      'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=900&q=80'
+    ],
+    live_url: null,
+    github_url: 'https://github.com/alvinoalbas',
     sort_order: 4,
   }
 ];

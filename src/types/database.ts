@@ -22,9 +22,13 @@ export interface Project {
   slug: string;
   summary: string;
   description: string;
+  background?: string | null;
   image_url?: string | null;
+  screenshots?: string[] | null;
   category: string;
   tags: string[];
+  core_tech?: string[] | null;
+  key_features?: string[] | null;
   metrics?: string | null;
   featured: boolean;
   live_url?: string | null;
@@ -49,7 +53,7 @@ export interface Experience {
 export interface Skill {
   id: string;
   name: string;
-  category: 'Frontend' | 'Backend' | 'Database' | 'DevOps & Tools' | string;
+  category: 'Frontend' | 'Backend' | 'Mobile' | 'Database' | 'DevOps & Tools' | 'Architecture' | string;
   proficiency: number;
   icon_name?: string | null;
   sort_order: number;

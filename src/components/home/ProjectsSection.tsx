@@ -2,7 +2,18 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { ExternalLink, Github, Layers, ArrowUpRight } from 'lucide-react';
+import { 
+  Github, 
+  Layers, 
+  ArrowUpRight, 
+  X, 
+  Cpu, 
+  BookOpen, 
+  CheckCircle2, 
+  ImageIcon, 
+  ChevronRight,
+  ExternalLink
+} from 'lucide-react';
 import { Project } from '@/types/database';
 
 interface ProjectsSectionProps {
@@ -11,6 +22,8 @@ interface ProjectsSectionProps {
 
 export default function ProjectsSection({ projects }: ProjectsSectionProps) {
   const [activeCategory, setActiveCategory] = useState<string>('All');
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [activeImageIdx, setActiveImageIdx] = useState<number>(0);
 
   const categories = ['All', ...Array.from(new Set(projects.map((p) => p.category)))];
 
@@ -19,6 +32,15 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
       ? projects
       : projects.filter((p) => p.category === activeCategory);
 
+  const handleOpenDetail = (project: Project) => {
+    setSelectedProject(project);
+    setActiveImageIdx(0);
+  };
+
+  const handleCloseDetail = () => {
+    setSelectedProject(null);
+  };
+
   return (
     <section id="projects" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto">
       {/* Section Header */}
@@ -26,11 +48,14 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
         <div>
           <div className="flex items-center gap-2 text-brand-emerald font-mono text-xs mb-2">
             <Layers size={14} />
-            <span>SELECTED ARCHITECTURE &amp; BUILDS</span>
+            <span>PORTFOLIO SHOWCASE &amp; CASE STUDIES</span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-text-primary">
             Featured Projects
           </h2>
+          <p className="text-xs font-mono text-text-secondary mt-1 max-w-md">
+            Click on any project to view complete architecture, background, core tech, and visual proofs.
+          </p>
         </div>
 
         {/* Category Filters */}
@@ -56,12 +81,13 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
         {filteredProjects.map((project) => (
           <article
             key={project.id}
-            className="group glass-card rounded-2xl overflow-hidden flex flex-col justify-between"
+            onClick={() => handleOpenDetail(project)}
+            className="group glass-card rounded-2xl overflow-hidden flex flex-col justify-between cursor-pointer border border-surface-border hover:border-brand-emerald/40 transition-all"
           >
             <div>
               {/* Image Preview Container */}
               {project.image_url && (
-                <div className="relative w-full h-48 sm:h-56 bg-surface overflow-hidden border-b border-surface-border">
+                <div className="relative w-full h-52 sm:h-60 bg-surface overflow-hidden border-b border-surface-border">
                   <Image
                     src={project.image_url}
                     alt={project.title}
@@ -98,13 +124,13 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                   </h3>
                 </div>
 
-                <p className="text-sm text-text-secondary leading-relaxed mb-4">
+                <p className="text-sm text-text-secondary leading-relaxed mb-4 line-clamp-2">
                   {project.summary}
                 </p>
 
                 {/* Tech Stack Tags */}
-                <div className="flex flex-wrap gap-1.5 mb-6">
-                  {project.tags.map((tag) => (
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {project.tags.slice(0, 4).map((tag) => (
                     <span
                       key={tag}
                       className="px-2.5 py-1 rounded-md bg-surface-hover border border-surface-border text-[11px] font-mono text-text-secondary"
@@ -112,44 +138,241 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                       {tag}
                     </span>
                   ))}
+                  {project.tags.length > 4 && (
+                    <span className="px-2 py-1 rounded-md bg-surface border border-surface-border text-[11px] font-mono text-text-muted">
+                      +{project.tags.length - 4}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
 
             {/* Bottom Actions */}
-            <div className="px-6 pb-6 pt-2 border-t border-surface-border/40 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {project.live_url && (
-                  <a
-                    href={project.live_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-mono text-text-primary hover:text-brand-emerald transition-colors"
-                  >
-                    <span>Live Demo</span>
-                    <ArrowUpRight size={14} />
-                  </a>
-                )}
-                {project.github_url && (
-                  <a
-                    href={project.github_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-xs font-mono text-text-secondary hover:text-text-primary transition-colors"
-                  >
-                    <Github size={14} />
-                    <span>Source</span>
-                  </a>
-                )}
-              </div>
-
-              <span className="text-[11px] font-mono text-text-muted">
-                #{project.slug}
+            <div className="px-6 pb-6 pt-3 border-t border-surface-border/40 flex items-center justify-between">
+              <span className="inline-flex items-center gap-1 text-xs font-mono text-brand-emerald group-hover:underline">
+                <span>View Details &amp; Proof</span>
+                <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
               </span>
+
+              {project.github_url && (
+                <a
+                  href={project.github_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center gap-1 text-xs font-mono text-text-secondary hover:text-text-primary transition-colors p-1"
+                  title="Source Code"
+                >
+                  <Github size={14} />
+                  <span>GitHub</span>
+                </a>
+              )}
             </div>
           </article>
         ))}
       </div>
+
+      {/* Project Detail Modal */}
+      {selectedProject && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto"
+          onClick={handleCloseDetail}
+        >
+          <div 
+            className="bg-surface border border-surface-border rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto my-8 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="sticky top-0 z-20 bg-surface/95 backdrop-blur-md p-6 border-b border-surface-border flex items-start justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="px-2.5 py-0.5 rounded badge-emerald text-[11px] font-mono">
+                    {selectedProject.category}
+                  </span>
+                  {selectedProject.metrics && (
+                    <span className="text-[11px] font-mono text-brand-amber">
+                      • {selectedProject.metrics}
+                    </span>
+                  )}
+                </div>
+                <h3 className="font-display text-2xl sm:text-3xl font-bold text-text-primary">
+                  {selectedProject.title}
+                </h3>
+              </div>
+
+              <button
+                onClick={handleCloseDetail}
+                className="p-2 rounded-xl bg-surface-hover hover:bg-surface-border text-text-secondary hover:text-text-primary transition-colors shrink-0"
+                aria-label="Close modal"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="p-6 sm:p-8 space-y-8">
+              {/* Image Proof Gallery */}
+              {((selectedProject.screenshots && selectedProject.screenshots.length > 0) || selectedProject.image_url) && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-xs font-mono text-text-muted">
+                    <ImageIcon size={14} className="text-brand-emerald" />
+                    <span>VISUAL PROOFS &amp; SCREENSHOTS</span>
+                  </div>
+
+                  {/* Main Selected Image */}
+                  <div className="relative w-full h-64 sm:h-80 rounded-xl overflow-hidden border border-surface-border bg-background">
+                    <Image
+                      src={
+                        selectedProject.screenshots?.[activeImageIdx] ||
+                        selectedProject.image_url ||
+                        ''
+                      }
+                      alt={selectedProject.title}
+                      fill
+                      className="object-cover object-top"
+                      sizes="(max-width: 768px) 100vw, 800px"
+                    />
+                  </div>
+
+                  {/* Thumbnail Row if multiple screenshots exist */}
+                  {selectedProject.screenshots && selectedProject.screenshots.length > 1 && (
+                    <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                      {selectedProject.screenshots.map((img, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setActiveImageIdx(idx)}
+                          className={`relative w-20 h-14 rounded-lg overflow-hidden shrink-0 border-2 transition-all ${
+                            activeImageIdx === idx
+                              ? 'border-brand-emerald shadow-md'
+                              : 'border-surface-border opacity-60 hover:opacity-100'
+                          }`}
+                        >
+                          <Image
+                            src={img}
+                            alt={`Thumbnail ${idx + 1}`}
+                            fill
+                            className="object-cover"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Background & Context Section */}
+              {selectedProject.background && (
+                <div className="p-5 rounded-xl bg-surface-hover border border-surface-border space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-mono font-semibold text-brand-emerald">
+                    <BookOpen size={14} />
+                    <span>PROJECT BACKGROUND &amp; CONTEXT</span>
+                  </div>
+                  <p className="text-sm text-text-primary leading-relaxed">
+                    {selectedProject.background}
+                  </p>
+                </div>
+              )}
+
+              {/* Core Technologies & Architecture */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-xs font-mono font-semibold text-text-muted uppercase tracking-wider">
+                  <Cpu size={14} className="text-brand-emerald" />
+                  <span>Core Tech Stack &amp; Implementation</span>
+                </div>
+
+                {selectedProject.core_tech && selectedProject.core_tech.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {selectedProject.core_tech.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 rounded-lg bg-surface-hover/80 border border-surface-border flex items-start gap-2.5 text-xs font-mono text-text-primary"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-brand-emerald mt-1.5 shrink-0" />
+                        <span>{item}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProject.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-3 py-1.5 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Key Features & Architecture Deliverables */}
+              {selectedProject.key_features && selectedProject.key_features.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-xs font-mono font-semibold text-text-muted uppercase tracking-wider">
+                    <CheckCircle2 size={14} className="text-brand-amber" />
+                    <span>Key Features &amp; System Capabilities</span>
+                  </div>
+
+                  <ul className="space-y-2">
+                    {selectedProject.key_features.map((feat, idx) => (
+                      <li
+                        key={idx}
+                        className="flex items-start gap-2.5 text-xs sm:text-sm text-text-secondary"
+                      >
+                        <CheckCircle2 size={15} className="text-brand-emerald shrink-0 mt-0.5" />
+                        <span>{feat}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Full Technical Description */}
+              <div className="space-y-2 pt-2 border-t border-surface-border">
+                <div className="text-xs font-mono text-text-muted uppercase tracking-wider">
+                  Technical Overview
+                </div>
+                <p className="text-sm text-text-secondary leading-relaxed">
+                  {selectedProject.description}
+                </p>
+              </div>
+
+              {/* Footer Links inside Modal */}
+              <div className="pt-6 border-t border-surface-border flex flex-wrap items-center justify-between gap-4">
+                <div className="text-xs font-mono text-text-muted">
+                  Identifier: <code className="text-text-primary font-mono">{selectedProject.slug}</code>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  {selectedProject.github_url && (
+                    <a
+                      href={selectedProject.github_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-hover hover:bg-surface-border border border-surface-border text-xs font-mono text-text-primary transition-colors"
+                    >
+                      <Github size={14} />
+                      <span>View GitHub Repository</span>
+                    </a>
+                  )}
+
+                  {selectedProject.live_url && (
+                    <a
+                      href={selectedProject.live_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-emerald hover:bg-emerald-400 text-background font-mono text-xs font-semibold transition-colors shadow-md shadow-brand-emerald/10"
+                    >
+                      <span>Open Live URL</span>
+                      <ExternalLink size={14} />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
