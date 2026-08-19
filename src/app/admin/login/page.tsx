@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Shield, Lock, Mail, ArrowLeft, AlertCircle, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Shield, Lock, Mail, ArrowLeft, AlertCircle, ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
 export default function AdminLoginPage() {
@@ -11,28 +11,12 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [infoMsg, setInfoMsg] = useState<string | null>(null);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg(null);
-    setInfoMsg(null);
-
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const isMock = !supabaseUrl || supabaseUrl.includes('placeholder');
-
-    if (isMock) {
-      // Local demo mode simulation
-      setTimeout(() => {
-        setLoading(false);
-        // Set local session cookie or storage for preview
-        localStorage.setItem('admin_authenticated', 'true');
-        router.push('/admin/dashboard');
-      }, 600);
-      return;
-    }
 
     try {
       const supabase = createClient();
@@ -49,14 +33,9 @@ export default function AdminLoginPage() {
         router.push('/admin/dashboard');
       }
     } catch (err: any) {
-      setErrorMsg(err.message || 'Authentication failed');
+      setErrorMsg(err.message || 'Authentication failed. Check your credentials.');
       setLoading(false);
     }
-  };
-
-  const handleDemoAccess = () => {
-    localStorage.setItem('admin_authenticated', 'true');
-    router.push('/admin/dashboard');
   };
 
   return (
@@ -95,13 +74,6 @@ export default function AdminLoginPage() {
             </div>
           )}
 
-          {infoMsg && (
-            <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono flex items-center gap-2">
-              <CheckCircle2 size={14} className="shrink-0" />
-              <span>{infoMsg}</span>
-            </div>
-          )}
-
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1.5">
               <label className="block text-xs font-mono text-text-muted">
@@ -114,7 +86,7 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@example.com"
+                  placeholder="alvinoalbas@gmail.com"
                   className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald transition-colors"
                 />
               </div>
@@ -146,22 +118,12 @@ export default function AdminLoginPage() {
                 <span>Authenticating with Supabase...</span>
               ) : (
                 <>
-                  <span>Sign In as Admin</span>
+                  <span>Sign In with Password</span>
                   <ArrowRight size={14} />
                 </>
               )}
             </button>
           </form>
-
-          {/* Quick Demo Preview shortcut for instant local test */}
-          <div className="mt-6 pt-4 border-t border-surface-border/60 text-center">
-            <button
-              onClick={handleDemoAccess}
-              className="text-xs font-mono text-brand-amber hover:underline inline-flex items-center gap-1"
-            >
-              <span>⚡ Enter Admin Dashboard directly (Preview Mode)</span>
-            </button>
-          </div>
         </div>
       </div>
     </div>
