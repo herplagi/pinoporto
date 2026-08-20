@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Mail, Send, CheckCircle2, AlertCircle, MessageSquare } from 'lucide-react';
+import { Mail, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import { sendContactMessage } from '@/lib/data';
 import { Profile } from '@/types/database';
+import AnimateIn from '@/components/ui/AnimateIn';
 
 interface ContactSectionProps {
   profile: Profile;
@@ -43,145 +44,130 @@ export default function ContactSection({ profile }: ContactSectionProps) {
   };
 
   return (
-    <section id="contact" className="py-20 px-4 sm:px-6 max-w-6xl mx-auto border-t border-surface-border/50">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-        {/* Left Column: Direct Info */}
-        <div className="space-y-6">
-          <div>
-            <div className="flex items-center gap-2 text-brand-emerald font-mono text-xs mb-2">
-              <MessageSquare size={14} />
-              <span>DIRECT COMMUNICATION</span>
-            </div>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-text-primary">
-              Let&apos;s Build Something Resilient.
+    <section id="contact" className="py-24 md:py-32 px-6 md:px-10 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
+        {/* Left: headline + email */}
+        <AnimateIn>
+          <div className="space-y-8">
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-text-primary leading-[1.05]">
+              Let&apos;s talk.
             </h2>
+
+            <p className="text-text-secondary max-w-md leading-relaxed">
+              Have a project in mind, an engineering role, or just want to connect? 
+              Drop a message or email directly.
+            </p>
+
+            <a
+              href={`mailto:${profile.email}`}
+              className="link-underline text-lg md:text-xl text-text-primary hover:text-accent transition-colors"
+            >
+              {profile.email}
+            </a>
           </div>
+        </AnimateIn>
 
-          <p className="text-sm text-text-secondary leading-relaxed max-w-md">
-            Have a system architecture challenge, a fullstack product in need of engineering, or an open engineering role? Send a note directly below or reach out via email.
-          </p>
-
-          <div className="space-y-3 pt-2">
-            <div className="p-4 rounded-xl bg-surface border border-surface-border flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-surface-hover border border-surface-border flex items-center justify-center text-brand-emerald">
-                <Mail size={18} />
-              </div>
-              <div>
-                <div className="text-[11px] font-mono text-text-muted">Direct Email</div>
-                <a
-                  href={`mailto:${profile.email}`}
-                  className="font-mono text-xs sm:text-sm text-text-primary hover:text-brand-emerald transition-colors"
+        {/* Right: form */}
+        <AnimateIn delay={0.1}>
+          <div>
+            {submitted ? (
+              <div className="py-12 space-y-4">
+                <CheckCircle2 size={28} className="text-accent" />
+                <h3 className="font-display text-xl font-semibold text-text-primary">
+                  Message sent.
+                </h3>
+                <p className="text-sm text-text-secondary max-w-xs">
+                  Thanks for reaching out. I&apos;ll get back to you soon.
+                </p>
+                <button
+                  onClick={() => setSubmitted(false)}
+                  className="text-sm text-text-muted hover:text-text-primary transition-colors mt-4"
                 >
-                  {profile.email}
-                </a>
+                  Send another →
+                </button>
               </div>
-            </div>
-          </div>
-        </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {errorMsg && (
+                  <div className="p-3 rounded-lg border border-red-500/20 text-red-400 text-xs flex items-center gap-2">
+                    <AlertCircle size={14} className="shrink-0" />
+                    <span>{errorMsg}</span>
+                  </div>
+                )}
 
-        {/* Right Column: Contact Form */}
-        <div className="glass-card rounded-2xl p-6 sm:p-8">
-          {submitted ? (
-            <div className="text-center py-10 space-y-4">
-              <div className="w-12 h-12 rounded-full bg-brand-emerald/10 border border-brand-emerald/30 text-brand-emerald flex items-center justify-center mx-auto">
-                <CheckCircle2 size={24} />
-              </div>
-              <h3 className="font-display text-lg font-bold text-text-primary">
-                Message Dispatched
-              </h3>
-              <p className="text-xs text-text-secondary max-w-xs mx-auto">
-                Your note has been received and saved directly to the database. I will get back to you shortly.
-              </p>
-              <button
-                onClick={() => setSubmitted(false)}
-                className="mt-4 px-4 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary hover:bg-surface"
-              >
-                Send another message
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {errorMsg && (
-                <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-mono flex items-center gap-2">
-                  <AlertCircle size={14} className="shrink-0" />
-                  <span>{errorMsg}</span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="block text-xs text-text-muted">
+                      Name <span className="text-accent">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.sender_name}
+                      onChange={(e) => setFormData({ ...formData, sender_name: e.target.value })}
+                      placeholder="Your name"
+                      className="w-full px-0 py-2.5 bg-transparent border-b border-surface-border text-sm text-text-primary placeholder:text-text-muted/50 transition-colors"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block text-xs text-text-muted">
+                      Email <span className="text-accent">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={formData.sender_email}
+                      onChange={(e) => setFormData({ ...formData, sender_email: e.target.value })}
+                      placeholder="you@company.com"
+                      className="w-full px-0 py-2.5 bg-transparent border-b border-surface-border text-sm text-text-primary placeholder:text-text-muted/50 transition-colors"
+                    />
+                  </div>
                 </div>
-              )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-mono text-text-muted">
-                    Your Name <span className="text-brand-emerald">*</span>
-                  </label>
+                  <label className="block text-xs text-text-muted">Subject</label>
                   <input
                     type="text"
-                    required
-                    value={formData.sender_name}
-                    onChange={(e) => setFormData({ ...formData, sender_name: e.target.value })}
-                    placeholder="e.g. Alex Morgan"
-                    className="w-full px-3.5 py-2.5 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary placeholder:text-text-muted/60 focus:outline-none focus:border-brand-emerald transition-colors"
+                    value={formData.subject}
+                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                    placeholder="What's this about?"
+                    className="w-full px-0 py-2.5 bg-transparent border-b border-surface-border text-sm text-text-primary placeholder:text-text-muted/50 transition-colors"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-mono text-text-muted">
-                    Email Address <span className="text-brand-emerald">*</span>
+                  <label className="block text-xs text-text-muted">
+                    Message <span className="text-accent">*</span>
                   </label>
-                  <input
-                    type="email"
+                  <textarea
                     required
-                    value={formData.sender_email}
-                    onChange={(e) => setFormData({ ...formData, sender_email: e.target.value })}
-                    placeholder="alex@company.com"
-                    className="w-full px-3.5 py-2.5 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary placeholder:text-text-muted/60 focus:outline-none focus:border-brand-emerald transition-colors"
+                    rows={4}
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    placeholder="Tell me about your project or opportunity..."
+                    className="w-full px-0 py-2.5 bg-transparent border-b border-surface-border text-sm text-text-primary placeholder:text-text-muted/50 transition-colors resize-none"
                   />
                 </div>
-              </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-[11px] font-mono text-text-muted">
-                  Subject / Topic
-                </label>
-                <input
-                  type="text"
-                  value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  placeholder="System architecture inquiry, project collaboration..."
-                  className="w-full px-3.5 py-2.5 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary placeholder:text-text-muted/60 focus:outline-none focus:border-brand-emerald transition-colors"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="block text-[11px] font-mono text-text-muted">
-                  Message <span className="text-brand-emerald">*</span>
-                </label>
-                <textarea
-                  required
-                  rows={4}
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  placeholder="Describe your project, timeline, or engineering opportunity..."
-                  className="w-full px-3.5 py-2.5 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary placeholder:text-text-muted/60 focus:outline-none focus:border-brand-emerald transition-colors resize-none"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 rounded-lg bg-brand-emerald hover:bg-emerald-400 disabled:opacity-50 text-background font-mono text-xs font-semibold flex items-center justify-center gap-2 transition-all shadow-md shadow-brand-emerald/10"
-              >
-                {loading ? (
-                  <span>Dispatching to Supabase...</span>
-                ) : (
-                  <>
-                    <span>Send Message</span>
-                    <Send size={13} />
-                  </>
-                )}
-              </button>
-            </form>
-          )}
-        </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-text-primary hover:bg-white text-background text-sm font-medium transition-colors disabled:opacity-50"
+                >
+                  {loading ? (
+                    <span>Sending...</span>
+                  ) : (
+                    <>
+                      <span>Send message</span>
+                      <Send size={14} />
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
+          </div>
+        </AnimateIn>
       </div>
     </section>
   );

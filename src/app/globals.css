@@ -4,90 +4,78 @@
 
 @layer base {
   :root {
-    --background: 8 11 17;
-    --foreground: 248 250 252;
+    --background: 10 10 10;
+    --foreground: 250 250 250;
   }
 
   body {
-    background-color: #080B11;
-    color: #F8FAFC;
+    background-color: #0a0a0a;
+    color: #fafafa;
     font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
     overflow-x: hidden;
-    selection-background-color: #10B981;
-    selection-color: #080B11;
   }
 
   ::selection {
-    background: rgba(16, 185, 129, 0.3);
-    color: #34D399;
+    background: rgba(16, 185, 129, 0.25);
+    color: #fafafa;
   }
 }
 
-/* Custom scrollbar */
+/* Minimal scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #080B11;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1E293B;
-  border-radius: 4px;
+  background: #262626;
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: #404040;
 }
 
-/* Glass & Card utilities */
-.glass-panel {
-  background: rgba(20, 27, 43, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+/* Divider utility */
+.section-divider {
+  border-top: 1px solid #262626;
 }
 
-.glass-card {
-  background: #141B2B;
-  border: 1px solid #232F47;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+/* Project row hover image reveal */
+.project-row:hover .project-thumb {
+  opacity: 1;
+  transform: scale(1);
 }
 
-.glass-card:hover {
-  border-color: rgba(16, 185, 129, 0.4);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+.project-thumb {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.glow-emerald {
-  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.25);
+/* Link underline animation */
+.link-underline {
+  position: relative;
+  display: inline-block;
 }
 
-.glow-amber {
-  box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.25);
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: #10B981;
+  transition: width 0.3s ease;
 }
 
-.badge-emerald {
-  background: rgba(16, 185, 129, 0.12);
-  color: #34D399;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+.link-underline:hover::after {
+  width: 100%;
 }
 
-.badge-amber {
-  background: rgba(245, 158, 11, 0.12);
-  color: #FBBF24;
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-.badge-slate {
-  background: rgba(51, 65, 85, 0.4);
-  color: #94A3B8;
-  border: 1px solid rgba(71, 85, 105, 0.5);
-}
-
-/* Subtle background grid */
-.bg-grid-pattern {
-  background-size: 32px 32px;
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+/* Form input focus */
+input:focus, textarea:focus {
+  outline: none;
+  border-color: #10B981 !important;
 }

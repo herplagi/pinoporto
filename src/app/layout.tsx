@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Syne, JetBrains_Mono } from 'next/font/google';
+import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
 const inter = Inter({
@@ -8,10 +8,10 @@ const inter = Inter({
   display: 'swap',
 });
 
-const syne = Syne({
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  weight: ['500', '600', '700', '800'],
-  variable: '--font-syne',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-space-grotesk',
   display: 'swap',
 });
 
@@ -58,15 +58,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`${inter.variable} ${syne.variable} ${jetbrainsMono.variable} font-sans bg-background text-text-primary antialiased min-h-screen relative selection:bg-brand-emerald/20 selection:text-brand-emerald`}
+        className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans bg-background text-text-primary antialiased min-h-screen`}
       >
-        {/* Subtle Ambient Mesh Glows */}
-        <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[500px] bg-mesh-glow pointer-events-none z-0" />
-        <div className="fixed top-1/3 right-0 w-[500px] h-[500px] bg-mesh-glow-amber pointer-events-none z-0 opacity-40" />
-        
-        <div className="relative z-10 flex flex-col min-h-screen">
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   );

@@ -20,10 +20,10 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="relative min-h-screen">
       <Navbar availableForHire={profile.available_for_hire} />
       
-      <main className="flex-grow">
+      <main>
         <HeroSection profile={profile} projectsCount={projects.length} />
         <ProjectsSection projects={projects} />
         <ExperienceSection experiences={experiences} />

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ArrowDown, Copy, Check, ExternalLink, Terminal, Zap } from 'lucide-react';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Profile } from '@/types/database';
 
 interface HeroSectionProps {
@@ -9,106 +9,66 @@ interface HeroSectionProps {
   projectsCount?: number;
 }
 
-export default function HeroSection({ profile, projectsCount = 4 }: HeroSectionProps) {
-  const [copied, setCopied] = useState(false);
-  const npxCommand = `npx ${profile.full_name ? profile.full_name.toLowerCase().replace(/\s+/g, '-') : 'alvino-albas'}`;
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(npxCommand);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
+export default function HeroSection({ profile }: HeroSectionProps) {
   return (
-    <section className="pt-32 pb-16 md:pt-40 md:pb-24 px-4 sm:px-6 max-w-6xl mx-auto">
-      {/* Top micro badges */}
-      <div className="flex flex-wrap items-center gap-3 mb-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full badge-emerald text-xs font-mono">
-          <span className={`w-2 h-2 rounded-full ${profile.available_for_hire ? 'bg-brand-emerald animate-pulse' : 'bg-text-muted'}`} />
-          <span>
-            Status: {profile.available_for_hire ? 'Available for Full-Stack & Mobile Roles' : 'Currently Focused on Projects'}
-          </span>
-        </div>
+    <section className="min-h-[90vh] flex flex-col justify-end px-6 md:px-10 pb-16 md:pb-24 max-w-7xl mx-auto">
+      <div className="space-y-6">
+        {/* Name as typography statement */}
+        <motion.h1
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="font-display text-[clamp(3rem,10vw,8rem)] font-bold leading-[0.9] tracking-tighter text-text-primary"
+        >
+          {profile.full_name || 'Alvino Albas'}
+        </motion.h1>
 
-        <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full badge-slate text-xs font-mono">
-          <Zap size={12} className="text-brand-amber" />
-          <span>Laravel · Express.js · React Native · Flutter</span>
-        </div>
-      </div>
-
-      {/* Main Headline */}
-      <div className="space-y-4 max-w-4xl">
-        <h1 className="font-display text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-text-primary leading-[1.08]">
-          Building <span className="text-transparent bg-clip-text bg-gradient-to-r from-text-primary via-slate-200 to-slate-400">scalable web apps</span> &amp; <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-emerald via-teal-300 to-cyan-400">mobile solutions</span>.
-        </h1>
-
-        <p className="text-base sm:text-xl text-text-secondary max-w-2xl leading-relaxed pt-2">
+        {/* One sentence */}
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="text-base md:text-lg text-text-secondary max-w-xl leading-relaxed"
+        >
           {profile.bio}
-        </p>
-      </div>
+        </motion.p>
 
-      {/* Terminal Command & Action Buttons */}
-      <div className="pt-8 flex flex-col sm:flex-row sm:items-center gap-4">
-        <a
-          href="#projects"
-          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-brand-emerald hover:bg-emerald-400 text-background font-mono text-sm font-semibold transition-all duration-200 shadow-lg shadow-brand-emerald/20 hover:shadow-brand-emerald/30 hover:-translate-y-0.5"
+        {/* Minimal context line */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="flex items-center gap-4 text-sm text-text-muted"
         >
-          <span>Explore Featured Works</span>
-          <ArrowDown size={16} />
-        </a>
+          <span>{profile.location || 'Padang, Indonesia'}</span>
+          <span className="w-1 h-1 rounded-full bg-text-muted" />
+          <span>Full-Stack & Mobile Developer</span>
+          {profile.available_for_hire && (
+            <>
+              <span className="w-1 h-1 rounded-full bg-text-muted" />
+              <span className="text-accent">Open to work</span>
+            </>
+          )}
+        </motion.div>
+      </div>
 
-        <a
-          href="#contact"
-          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-surface hover:bg-surface-hover border border-surface-border text-text-primary font-mono text-sm transition-all duration-200 hover:-translate-y-0.5"
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2, duration: 0.6 }}
+        className="absolute bottom-8 left-6 md:left-10 flex items-center gap-2 text-xs text-text-muted"
+      >
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
         >
-          <span>Get in Touch</span>
-          <ExternalLink size={15} className="text-text-muted" />
-        </a>
-
-        {/* Interactive CLI badge */}
-        <div className="hidden lg:flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-surface border border-surface-border font-mono text-xs text-text-secondary">
-          <Terminal size={14} className="text-brand-emerald" />
-          <span className="text-text-primary">{npxCommand}</span>
-          <button
-            onClick={handleCopy}
-            className="p-1 rounded hover:bg-surface-hover text-text-muted hover:text-text-primary transition-colors ml-1"
-            title="Copy command"
-          >
-            {copied ? <Check size={14} className="text-brand-emerald" /> : <Copy size={14} />}
-          </button>
-        </div>
-      </div>
-
-      {/* Dynamic Stats Grid Strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-16 pt-8 border-t border-surface-border/60">
-        <div className="p-4 rounded-xl bg-surface/60 border border-surface-border">
-          <div className="font-mono text-2xl sm:text-3xl font-bold text-text-primary">
-            {profile.years_of_experience || 3}+ <span className="text-brand-emerald text-lg">Years</span>
-          </div>
-          <div className="text-xs font-mono text-text-muted mt-1">Fullstack Development</div>
-        </div>
-
-        <div className="p-4 rounded-xl bg-surface/60 border border-surface-border">
-          <div className="font-mono text-2xl sm:text-3xl font-bold text-text-primary">
-            {projectsCount}+ <span className="text-brand-amber text-lg">Core</span>
-          </div>
-          <div className="text-xs font-mono text-text-muted mt-1">Production Builds</div>
-        </div>
-
-        <div className="p-4 rounded-xl bg-surface/60 border border-surface-border">
-          <div className="font-mono text-2xl sm:text-3xl font-bold text-text-primary">
-            SI <span className="text-brand-emerald text-lg">Unand</span>
-          </div>
-          <div className="text-xs font-mono text-text-muted mt-1">Information Systems Grad</div>
-        </div>
-
-        <div className="p-4 rounded-xl bg-surface/60 border border-surface-border">
-          <div className="font-mono text-2xl sm:text-3xl font-bold text-text-primary">
-            Web &amp; <span className="text-cyan-400 text-lg">App</span>
-          </div>
-          <div className="text-xs font-mono text-text-muted mt-1">Cross-Platform Solutions</div>
-        </div>
-      </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <path d="M12 5v14M5 12l7 7 7-7" />
+          </svg>
+        </motion.div>
+        <span>Scroll</span>
+      </motion.div>
     </section>
   );
 }
