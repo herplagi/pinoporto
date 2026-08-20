@@ -24,7 +24,7 @@ export default async function HomePage() {
       <Navbar availableForHire={profile.available_for_hire} />
       
       <main className="flex-grow">
-        <HeroSection profile={profile} />
+        <HeroSection profile={profile} projectsCount={projects.length} />
         <ProjectsSection projects={projects} />
         <ExperienceSection experiences={experiences} />
         <SkillsSection skills={skills} />

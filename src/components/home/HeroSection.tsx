@@ -6,11 +6,12 @@ import { Profile } from '@/types/database';
 
 interface HeroSectionProps {
   profile: Profile;
+  projectsCount?: number;
 }
 
-export default function HeroSection({ profile }: HeroSectionProps) {
+export default function HeroSection({ profile, projectsCount = 4 }: HeroSectionProps) {
   const [copied, setCopied] = useState(false);
-  const npxCommand = 'npx alvino-albas';
+  const npxCommand = `npx ${profile.full_name ? profile.full_name.toLowerCase().replace(/\s+/g, '-') : 'alvino-albas'}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(npxCommand);
@@ -23,8 +24,10 @@ export default function HeroSection({ profile }: HeroSectionProps) {
       {/* Top micro badges */}
       <div className="flex flex-wrap items-center gap-3 mb-6">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full badge-emerald text-xs font-mono">
-          <span className="w-2 h-2 rounded-full bg-brand-emerald animate-pulse" />
-          <span>Status: Available for Full-Stack &amp; Mobile Roles</span>
+          <span className={`w-2 h-2 rounded-full ${profile.available_for_hire ? 'bg-brand-emerald animate-pulse' : 'bg-text-muted'}`} />
+          <span>
+            Status: {profile.available_for_hire ? 'Available for Full-Stack & Mobile Roles' : 'Currently Focused on Projects'}
+          </span>
         </div>
 
         <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full badge-slate text-xs font-mono">
@@ -76,18 +79,18 @@ export default function HeroSection({ profile }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* Stats Grid Strip */}
+      {/* Dynamic Stats Grid Strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-16 pt-8 border-t border-surface-border/60">
         <div className="p-4 rounded-xl bg-surface/60 border border-surface-border">
           <div className="font-mono text-2xl sm:text-3xl font-bold text-text-primary">
-            3+ <span className="text-brand-emerald text-lg">Years</span>
+            {profile.years_of_experience || 3}+ <span className="text-brand-emerald text-lg">Years</span>
           </div>
           <div className="text-xs font-mono text-text-muted mt-1">Fullstack Development</div>
         </div>
 
         <div className="p-4 rounded-xl bg-surface/60 border border-surface-border">
           <div className="font-mono text-2xl sm:text-3xl font-bold text-text-primary">
-            4+ <span className="text-brand-amber text-lg">Core</span>
+            {projectsCount}+ <span className="text-brand-amber text-lg">Core</span>
           </div>
           <div className="text-xs font-mono text-text-muted mt-1">Production Builds</div>
         </div>
