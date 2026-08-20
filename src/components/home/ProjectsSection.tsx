@@ -12,7 +12,8 @@ import {
   CheckCircle2, 
   ImageIcon, 
   ChevronRight,
-  ExternalLink
+  ExternalLink,
+  Maximize2
 } from 'lucide-react';
 import { Project } from '@/types/database';
 
@@ -219,53 +220,79 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
 
             <div className="p-6 sm:p-8 space-y-8">
               {/* Image Proof Gallery */}
-              {((selectedProject.screenshots && selectedProject.screenshots.length > 0) || selectedProject.image_url) && (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-xs font-mono text-text-muted">
-                    <ImageIcon size={14} className="text-brand-emerald" />
-                    <span>VISUAL PROOFS &amp; SCREENSHOTS</span>
-                  </div>
+              {((selectedProject.screenshots && selectedProject.screenshots.length > 0) || selectedProject.image_url) && {
+                const currentImg =
+                  selectedProject.screenshots?.[activeImageIdx] ||
+                  selectedProject.image_url ||
+                  '';
 
-                  {/* Main Selected Image */}
-                  <div className="relative w-full h-64 sm:h-80 rounded-xl overflow-hidden border border-surface-border bg-background">
-                    <Image
-                      src={
-                        selectedProject.screenshots?.[activeImageIdx] ||
-                        selectedProject.image_url ||
-                        ''
-                      }
-                      alt={selectedProject.title}
-                      fill
-                      className="object-cover object-top"
-                      sizes="(max-width: 768px) 100vw, 800px"
-                    />
-                  </div>
+                return (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 text-xs font-mono text-text-muted">
+                        <ImageIcon size={14} className="text-brand-emerald" />
+                        <span>VISUAL PROOFS &amp; SCREENSHOTS</span>
+                      </div>
 
-                  {/* Thumbnail Row if multiple screenshots exist */}
-                  {selectedProject.screenshots && selectedProject.screenshots.length > 1 && (
-                    <div className="flex items-center gap-2 overflow-x-auto pb-1">
-                      {selectedProject.screenshots.map((img, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => setActiveImageIdx(idx)}
-                          className={`relative w-20 h-14 rounded-lg overflow-hidden shrink-0 border-2 transition-all ${
-                            activeImageIdx === idx
-                              ? 'border-brand-emerald shadow-md'
-                              : 'border-surface-border opacity-60 hover:opacity-100'
-                          }`}
-                        >
-                          <Image
-                            src={img}
-                            alt={`Thumbnail ${idx + 1}`}
-                            fill
-                            className="object-cover"
-                          />
-                        </button>
-                      ))}
+                      {selectedProject.screenshots && selectedProject.screenshots.length > 1 && (
+                        <span className="text-[11px] font-mono text-text-muted">
+                          {activeImageIdx + 1} of {selectedProject.screenshots.length}
+                        </span>
+                      )}
                     </div>
-                  )}
-                </div>
-              )}
+
+                    {/* Main Selected Image Showcase (Responsive for Mobile Portrait, Tablet, & Web Landscape) */}
+                    <div className="relative w-full min-h-[260px] sm:min-h-[380px] max-h-[560px] h-[42vh] sm:h-[50vh] rounded-xl overflow-hidden border border-surface-border bg-gradient-to-b from-background/95 via-surface/70 to-background/90 flex items-center justify-center p-3 sm:p-5 group/preview">
+                      <div className="relative w-full h-full flex items-center justify-center">
+                        <Image
+                          src={currentImg}
+                          alt={selectedProject.title}
+                          fill
+                          className="object-contain transition-all duration-300 drop-shadow-md"
+                          sizes="(max-width: 768px) 100vw, 800px"
+                          priority
+                        />
+                      </div>
+
+                      {/* Full-size view button */}
+                      <a
+                        href={currentImg}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="absolute top-3 right-3 z-10 px-2.5 py-1.5 rounded-lg bg-background/80 hover:bg-background border border-surface-border text-text-secondary hover:text-text-primary text-[11px] font-mono flex items-center gap-1.5 backdrop-blur-md transition-all shadow-md"
+                        title="Open full resolution in new tab"
+                      >
+                        <Maximize2 size={12} className="text-brand-emerald" />
+                        <span className="hidden sm:inline">View Full Image</span>
+                      </a>
+                    </div>
+
+                    {/* Thumbnail Row if multiple screenshots exist */}
+                    {selectedProject.screenshots && selectedProject.screenshots.length > 1 && (
+                      <div className="flex items-center gap-2.5 overflow-x-auto pb-1.5 pt-0.5">
+                        {selectedProject.screenshots.map((img, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => setActiveImageIdx(idx)}
+                            className={`relative w-20 sm:w-24 h-14 sm:h-16 rounded-lg overflow-hidden shrink-0 border-2 bg-background transition-all ${
+                              activeImageIdx === idx
+                                ? 'border-brand-emerald shadow-md ring-2 ring-brand-emerald/20'
+                                : 'border-surface-border opacity-60 hover:opacity-100'
+                            }`}
+                          >
+                            <Image
+                              src={img}
+                              alt={`Thumbnail ${idx + 1}`}
+                              fill
+                              className="object-cover"
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }()}
 
               {/* Background & Context Section */}
               {selectedProject.background && (
