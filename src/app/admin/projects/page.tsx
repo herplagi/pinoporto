@@ -14,11 +14,12 @@ import {
   BookOpen,
   Cpu,
   CheckCircle2,
-  ImageIcon
+  ImageIcon,
+  Github
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { getProjects } from '@/lib/data';
-import { Project } from '@/types/database';
+import { Project, ProjectRepoLink } from '@/types/database';
 
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -42,6 +43,7 @@ export default function AdminProjectsPage() {
     screenshots: '',
     live_url: '',
     github_url: '',
+    github_repos: [] as ProjectRepoLink[],
     featured: true,
     sort_order: 0,
   });
@@ -80,7 +82,12 @@ export default function AdminProjectsPage() {
       image_url: '',
       screenshots: '',
       live_url: '',
-      github_url: 'https://github.com/alvinoalbas',
+      github_url: '',
+      github_repos: [
+        { label: 'Mobile App (React Native)', url: 'https://github.com/alvinoalbas' },
+        { label: 'Web Admin Dashboard (React.js)', url: 'https://github.com/alvinoalbas' },
+        { label: 'Backend REST API (Express.js)', url: 'https://github.com/alvinoalbas' },
+      ],
       featured: true,
       sort_order: projects.length + 1,
     });
@@ -89,6 +96,15 @@ export default function AdminProjectsPage() {
 
   const openEditModal = (proj: Project) => {
     setEditingProject(proj);
+    
+    // Determine existing github repos or fallback from github_url
+    let existingRepos: ProjectRepoLink[] = [];
+    if (proj.github_repos && Array.isArray(proj.github_repos) && proj.github_repos.length > 0) {
+      existingRepos = proj.github_repos;
+    } else if (proj.github_url) {
+      existingRepos = [{ label: 'Main Repository', url: proj.github_url }];
+    }
+
     setForm({
       title: proj.title,
       slug: proj.slug,
@@ -104,10 +120,33 @@ export default function AdminProjectsPage() {
       screenshots: (proj.screenshots || []).join('\n'),
       live_url: proj.live_url || '',
       github_url: proj.github_url || '',
+      github_repos: existingRepos,
       featured: proj.featured,
       sort_order: proj.sort_order || 0,
     });
     setModalOpen(true);
+  };
+
+  const handleAddRepo = () => {
+    setForm((prev) => ({
+      ...prev,
+      github_repos: [...prev.github_repos, { label: '', url: '' }],
+    }));
+  };
+
+  const handleUpdateRepo = (index: number, field: 'label' | 'url', value: string) => {
+    setForm((prev) => {
+      const updated = [...prev.github_repos];
+      updated[index] = { ...updated[index], [field]: value };
+      return { ...prev, github_repos: updated };
+    });
+  };
+
+  const handleRemoveRepo = (index: number) => {
+    setForm((prev) => ({
+      ...prev,
+      github_repos: prev.github_repos.filter((_, i) => i !== index),
+    }));
   };
 
   const handleSlugGenerate = (title: string) => {
@@ -169,6 +208,9 @@ export default function AdminProjectsPage() {
     e.preventDefault();
     setSaving(true);
 
+    const validRepos = form.github_repos.filter((r) => r.url.trim().length > 0);
+    const primaryGithubUrl = validRepos[0]?.url || form.github_url || null;
+
     const projectPayload = {
       title: form.title,
       slug: form.slug,
@@ -183,7 +225,8 @@ export default function AdminProjectsPage() {
       image_url: form.image_url || null,
       screenshots: form.screenshots.split('\n').map((t) => t.trim()).filter(Boolean),
       live_url: form.live_url || null,
-      github_url: form.github_url || null,
+      github_url: primaryGithubUrl,
+      github_repos: validRepos.length > 0 ? validRepos : null,
       featured: form.featured,
       sort_order: Number(form.sort_order),
     };
@@ -595,32 +638,84 @@ export default function AdminProjectsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="block text-xs font-mono text-text-muted">
-                    GitHub Repository (Optional)
+              {/* Multi-Repository GitHub Links */}
+              <div className="space-y-3 p-3.5 rounded-xl bg-surface-hover border border-surface-border">
+                <div className="flex items-center justify-between">
+                  <label className="block text-xs font-mono text-text-primary font-semibold flex items-center gap-1.5">
+                    <Github size={14} className="text-brand-emerald" />
+                    <span>GitHub Repositories (Multi-Repo &amp; Monorepo Support)</span>
                   </label>
-                  <input
-                    type="url"
-                    value={form.github_url}
-                    onChange={(e) => setForm({ ...form, github_url: e.target.value })}
-                    placeholder="https://github.com/alvinoalbas/..."
-                    className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
-                  />
+                  <button
+                    type="button"
+                    onClick={handleAddRepo}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface hover:bg-surface-border border border-surface-border text-[11px] font-mono text-brand-emerald transition-colors"
+                  >
+                    <Plus size={12} />
+                    <span>Add Repo Link</span>
+                  </button>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="block text-xs font-mono text-text-muted">
-                    Live Demo URL (Optional — leave empty if none)
-                  </label>
-                  <input
-                    type="url"
-                    value={form.live_url}
-                    onChange={(e) => setForm({ ...form, live_url: e.target.value })}
-                    placeholder="Leave blank if no live deployment"
-                    className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
-                  />
-                </div>
+                <p className="text-[11px] font-mono text-text-muted">
+                  Add links for each component if your project separates Mobile, Backend API, and Web Dashboard.
+                </p>
+
+                {form.github_repos.length === 0 ? (
+                  <div className="p-3 rounded-lg bg-surface border border-surface-border text-center">
+                    <p className="text-[11px] font-mono text-text-muted">
+                      No GitHub repositories added. Click &ldquo;Add Repo Link&rdquo; to add backend, frontend, or mobile repositories.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {form.github_repos.map((repo, idx) => (
+                      <div
+                        key={idx}
+                        className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2.5 rounded-lg bg-surface border border-surface-border"
+                      >
+                        <div className="w-full sm:w-1/3">
+                          <input
+                            type="text"
+                            value={repo.label}
+                            onChange={(e) => handleUpdateRepo(idx, 'label', e.target.value)}
+                            placeholder="e.g. Mobile (React Native)"
+                            className="w-full px-2.5 py-1.5 rounded-md bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <input
+                            type="url"
+                            value={repo.url}
+                            onChange={(e) => handleUpdateRepo(idx, 'url', e.target.value)}
+                            placeholder="https://github.com/username/repo-name"
+                            className="w-full px-2.5 py-1.5 rounded-md bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveRepo(idx)}
+                          className="p-1.5 rounded-md text-red-400 hover:bg-red-500/10 transition-colors self-end sm:self-center"
+                          title="Remove repository"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Live Demo URL */}
+              <div className="space-y-1">
+                <label className="block text-xs font-mono text-text-muted">
+                  Live Demo URL (Optional — leave empty if none)
+                </label>
+                <input
+                  type="url"
+                  value={form.live_url}
+                  onChange={(e) => setForm({ ...form, live_url: e.target.value })}
+                  placeholder="https://yourproject.com (Leave blank if no live deployment)"
+                  className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
+                />
               </div>
 
               <div className="flex items-center gap-2 pt-2">

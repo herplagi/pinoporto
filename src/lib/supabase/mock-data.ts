@@ -49,6 +49,11 @@ export const initialProjects: Project[] = [
     ],
     live_url: null,
     github_url: 'https://github.com/alvinoalbas',
+    github_repos: [
+      { label: 'Mobile App (React Native)', url: 'https://github.com/alvinoalbas' },
+      { label: 'Web Admin Dashboard (React.js)', url: 'https://github.com/alvinoalbas' },
+      { label: 'Backend REST API (Express.js)', url: 'https://github.com/alvinoalbas' }
+    ],
     sort_order: 1,
   },
   {
@@ -81,6 +86,9 @@ export const initialProjects: Project[] = [
     ],
     live_url: null,
     github_url: 'https://github.com/alvinoalbas',
+    github_repos: [
+      { label: 'Fullstack Repository (Laravel & Blade)', url: 'https://github.com/alvinoalbas' }
+    ],
     sort_order: 2,
   },
   {
@@ -113,6 +121,9 @@ export const initialProjects: Project[] = [
     ],
     live_url: null,
     github_url: 'https://github.com/alvinoalbas',
+    github_repos: [
+      { label: 'Enterprise Web Portal (Native PHP)', url: 'https://github.com/alvinoalbas' }
+    ],
     sort_order: 3,
   },
   {
@@ -144,6 +155,9 @@ export const initialProjects: Project[] = [
     ],
     live_url: null,
     github_url: 'https://github.com/alvinoalbas',
+    github_repos: [
+      { label: 'Flutter Mobile App Client', url: 'https://github.com/alvinoalbas' }
+    ],
     sort_order: 4,
   }
 ];

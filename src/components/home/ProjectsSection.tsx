@@ -154,9 +154,17 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                 <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
               </span>
 
-              {project.github_url && (
+              {project.github_repos && project.github_repos.length > 1 ? (
+                <span
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-secondary group-hover:border-brand-emerald/40 transition-colors"
+                  title={`${project.github_repos.length} Repositories (Mobile, Backend, Frontend)`}
+                >
+                  <Github size={13} className="text-brand-emerald" />
+                  <span>{project.github_repos.length} Repos</span>
+                </span>
+              ) : (project.github_repos && project.github_repos.length === 1) || project.github_url ? (
                 <a
-                  href={project.github_url}
+                  href={project.github_repos?.[0]?.url || project.github_url!}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
@@ -166,7 +174,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                   <Github size={14} />
                   <span>GitHub</span>
                 </a>
-              )}
+              ) : null}
             </div>
           </article>
         ))}
@@ -337,37 +345,86 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                 </p>
               </div>
 
-              {/* Footer Links inside Modal */}
+              {/* Multi-Repository Showcase Section */}
+              {((selectedProject.github_repos && selectedProject.github_repos.length > 0) || selectedProject.github_url) && (
+                <div className="space-y-3 pt-4 border-t border-surface-border">
+                  <div className="flex items-center gap-2 text-xs font-mono font-semibold text-text-muted uppercase tracking-wider">
+                    <Github size={14} className="text-brand-emerald" />
+                    <span>
+                      Source Code Repositories {selectedProject.github_repos && selectedProject.github_repos.length > 1 ? `(${selectedProject.github_repos.length} Repositories)` : ''}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {selectedProject.github_repos && selectedProject.github_repos.length > 0 ? (
+                      selectedProject.github_repos.map((repo, idx) => (
+                        <a
+                          key={idx}
+                          href={repo.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group/repo p-3.5 rounded-xl bg-surface-hover hover:bg-surface-border border border-surface-border hover:border-brand-emerald/50 flex items-center justify-between gap-3 transition-all shadow-sm"
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="p-2 rounded-lg bg-surface border border-surface-border text-brand-emerald group-hover/repo:text-text-primary shrink-0">
+                              <Github size={16} />
+                            </div>
+                            <div className="truncate">
+                              <div className="text-xs font-mono font-semibold text-text-primary group-hover/repo:text-brand-emerald transition-colors truncate">
+                                {repo.label || 'Repository'}
+                              </div>
+                              <div className="text-[10px] font-mono text-text-muted truncate mt-0.5">
+                                {repo.url.replace(/^https?:\/\//, '')}
+                              </div>
+                            </div>
+                          </div>
+                          <ArrowUpRight size={14} className="text-text-muted group-hover/repo:text-brand-emerald shrink-0 group-hover/repo:translate-x-0.5 group-hover/repo:-translate-y-0.5 transition-transform" />
+                        </a>
+                      ))
+                    ) : (
+                      <a
+                        href={selectedProject.github_url!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group/repo p-3.5 rounded-xl bg-surface-hover hover:bg-surface-border border border-surface-border hover:border-brand-emerald/50 flex items-center justify-between gap-3 transition-all sm:col-span-2"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <div className="p-2 rounded-lg bg-surface border border-surface-border text-brand-emerald group-hover/repo:text-text-primary shrink-0">
+                            <Github size={16} />
+                          </div>
+                          <div>
+                            <div className="text-xs font-mono font-semibold text-text-primary group-hover/repo:text-brand-emerald transition-colors">
+                              Source Code Repository
+                            </div>
+                            <div className="text-[10px] font-mono text-text-muted truncate mt-0.5">
+                              {selectedProject.github_url?.replace(/^https?:\/\//, '')}
+                            </div>
+                          </div>
+                        </div>
+                        <ArrowUpRight size={14} className="text-text-muted group-hover/repo:text-brand-emerald shrink-0 group-hover/repo:translate-x-0.5 group-hover/repo:-translate-y-0.5 transition-transform" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Footer Modal Action */}
               <div className="pt-6 border-t border-surface-border flex flex-wrap items-center justify-between gap-4">
                 <div className="text-xs font-mono text-text-muted">
                   Identifier: <code className="text-text-primary font-mono">{selectedProject.slug}</code>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  {selectedProject.github_url && (
-                    <a
-                      href={selectedProject.github_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-hover hover:bg-surface-border border border-surface-border text-xs font-mono text-text-primary transition-colors"
-                    >
-                      <Github size={14} />
-                      <span>View GitHub Repository</span>
-                    </a>
-                  )}
-
-                  {selectedProject.live_url && (
-                    <a
-                      href={selectedProject.live_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-emerald hover:bg-emerald-400 text-background font-mono text-xs font-semibold transition-colors shadow-md shadow-brand-emerald/10"
-                    >
-                      <span>Open Live URL</span>
-                      <ExternalLink size={14} />
-                    </a>
-                  )}
-                </div>
+                {selectedProject.live_url && (
+                  <a
+                    href={selectedProject.live_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-emerald hover:bg-emerald-400 text-background font-mono text-xs font-semibold transition-colors shadow-md shadow-brand-emerald/10"
+                  >
+                    <span>Open Live Deployment</span>
+                    <ExternalLink size={14} />
+                  </a>
+                )}
               </div>
             </div>
           </div>

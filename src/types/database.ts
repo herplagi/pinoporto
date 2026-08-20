@@ -16,6 +16,11 @@ export interface Profile {
   updated_at?: string;
 }
 
+export interface ProjectRepoLink {
+  label: string;
+  url: string;
+}
+
 export interface Project {
   id: string;
   title: string;
@@ -33,6 +38,7 @@ export interface Project {
   featured: boolean;
   live_url?: string | null;
   github_url?: string | null;
+  github_repos?: ProjectRepoLink[] | null;
   sort_order: number;
   created_at?: string;
   updated_at?: string;
