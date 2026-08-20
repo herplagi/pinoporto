@@ -36,6 +36,8 @@ export interface Project {
   key_features?: string[] | null;
   metrics?: string | null;
   featured: boolean;
+  is_private?: boolean;
+  confidentiality_note?: string | null;
   live_url?: string | null;
   github_url?: string | null;
   github_repos?: ProjectRepoLink[] | null;

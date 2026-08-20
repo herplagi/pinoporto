@@ -15,7 +15,8 @@ import {
   Cpu,
   CheckCircle2,
   ImageIcon,
-  Github
+  Github,
+  Lock
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { getProjects } from '@/lib/data';
@@ -45,6 +46,8 @@ export default function AdminProjectsPage() {
     github_url: '',
     github_repos: [] as ProjectRepoLink[],
     featured: true,
+    is_private: false,
+    confidentiality_note: '',
     sort_order: 0,
   });
 
@@ -89,6 +92,8 @@ export default function AdminProjectsPage() {
         { label: 'Backend REST API (Express.js)', url: 'https://github.com/alvinoalbas' },
       ],
       featured: true,
+      is_private: false,
+      confidentiality_note: '',
       sort_order: projects.length + 1,
     });
     setModalOpen(true);
@@ -122,6 +127,8 @@ export default function AdminProjectsPage() {
       github_url: proj.github_url || '',
       github_repos: existingRepos,
       featured: proj.featured,
+      is_private: proj.is_private || false,
+      confidentiality_note: proj.confidentiality_note || '',
       sort_order: proj.sort_order || 0,
     });
     setModalOpen(true);
@@ -228,6 +235,8 @@ export default function AdminProjectsPage() {
       github_url: primaryGithubUrl,
       github_repos: validRepos.length > 0 ? validRepos : null,
       featured: form.featured,
+      is_private: form.is_private,
+      confidentiality_note: form.is_private ? (form.confidentiality_note || null) : null,
       sort_order: Number(form.sort_order),
     };
 
@@ -365,6 +374,12 @@ export default function AdminProjectsPage() {
                     <span className="px-2 py-0.5 rounded badge-emerald text-[10px] font-mono flex items-center gap-1">
                       <Star size={10} />
                       <span>Featured</span>
+                    </span>
+                  )}
+                  {proj.is_private && (
+                    <span className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-mono flex items-center gap-1">
+                      <Lock size={10} />
+                      <span>Private / NDA</span>
                     </span>
                   )}
                   <span className="px-2 py-0.5 rounded bg-surface-hover border border-surface-border text-[10px] font-mono text-text-secondary">
@@ -700,6 +715,46 @@ export default function AdminProjectsPage() {
                         </button>
                       </div>
                     ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Confidentiality & NDA Protection */}
+              <div className="space-y-3 p-3.5 rounded-xl bg-surface-hover border border-surface-border">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label
+                      htmlFor="private-toggle"
+                      className="text-xs font-mono font-semibold text-text-primary flex items-center gap-2 cursor-pointer"
+                    >
+                      <Lock size={14} className={form.is_private ? 'text-brand-amber' : 'text-text-muted'} />
+                      <span>Private / Enterprise System (NDA Protected)</span>
+                    </label>
+                    <p className="text-[11px] font-mono text-text-muted mt-0.5">
+                      Enable for internal client / company projects where code cannot be shared publicly.
+                    </p>
+                  </div>
+                  <input
+                    type="checkbox"
+                    id="private-toggle"
+                    checked={form.is_private}
+                    onChange={(e) => setForm({ ...form, is_private: e.target.checked })}
+                    className="w-4 h-4 rounded bg-surface border-surface-border text-brand-amber focus:ring-0 cursor-pointer"
+                  />
+                </div>
+
+                {form.is_private && (
+                  <div className="pt-2 border-t border-surface-border/60 space-y-1">
+                    <label className="block text-[11px] font-mono text-brand-amber">
+                      Confidentiality Note (Optional notice shown to visitors)
+                    </label>
+                    <input
+                      type="text"
+                      value={form.confidentiality_note}
+                      onChange={(e) => setForm({ ...form, confidentiality_note: e.target.value })}
+                      placeholder="e.g. Developed under NDA for enterprise client. Codebase and internal databases are protected."
+                      className="w-full px-3 py-2 rounded-lg bg-surface border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-amber"
+                    />
                   </div>
                 )}
               </div>

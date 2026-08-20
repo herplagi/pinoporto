@@ -114,16 +114,16 @@ export const initialProjects: Project[] = [
     ],
     metrics: 'Enterprise Leave Portal',
     featured: true,
+    is_private: true,
+    confidentiality_note: 'Dikembangkan sebagai sistem korporat internal di PT Semen Padang (SIG Group). Akses source code dan skema internal dilindungi perjanjian kerahasiaan (NDA).',
     image_url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=80',
     screenshots: [
       'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=900&q=80',
       'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=900&q=80'
     ],
     live_url: null,
-    github_url: 'https://github.com/alvinoalbas',
-    github_repos: [
-      { label: 'Enterprise Web Portal (Native PHP)', url: 'https://github.com/alvinoalbas' }
-    ],
+    github_url: null,
+    github_repos: [],
     sort_order: 3,
   },
   {

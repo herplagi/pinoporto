@@ -39,6 +39,8 @@ CREATE TABLE IF NOT EXISTS public.projects (
   key_features TEXT[] DEFAULT '{}',
   metrics TEXT,
   featured BOOLEAN DEFAULT false,
+  is_private BOOLEAN DEFAULT false,
+  confidentiality_note TEXT,
   live_url TEXT,
   github_url TEXT,
   github_repos JSONB DEFAULT '[]'::jsonb,

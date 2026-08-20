@@ -13,7 +13,8 @@ import {
   ImageIcon, 
   ChevronRight,
   ExternalLink,
-  Maximize2
+  Maximize2,
+  Lock
 } from 'lucide-react';
 import { Project } from '@/types/database';
 
@@ -99,11 +100,21 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                   <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/20 to-transparent" />
                   
                   {/* Category Pill on Image */}
-                  <div className="absolute top-3 left-3">
+                  <div className="absolute top-3 left-3 flex items-center gap-2">
                     <span className="px-2.5 py-1 rounded-md bg-background/80 backdrop-blur-md border border-surface-border text-[11px] font-mono text-text-primary">
                       {project.category}
                     </span>
                   </div>
+
+                  {/* Private / NDA Badge on Image */}
+                  {project.is_private && (
+                    <div className="absolute top-3 right-3">
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-950/85 backdrop-blur-md border border-amber-500/40 text-[10px] font-mono text-amber-300 font-semibold shadow-sm">
+                        <Lock size={10} />
+                        <span>Private / NDA</span>
+                      </span>
+                    </div>
+                  )}
 
                   {/* Metrics Badge */}
                   {project.metrics && (
@@ -155,7 +166,15 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                 <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
               </span>
 
-              {project.github_repos && project.github_repos.length > 1 ? (
+              {project.is_private && !project.github_url && (!project.github_repos || project.github_repos.length === 0) ? (
+                <span
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/25 text-xs font-mono text-amber-400"
+                  title="Source code is private under corporate NDA"
+                >
+                  <Lock size={12} />
+                  <span>NDA Protected</span>
+                </span>
+              ) : project.github_repos && project.github_repos.length > 1 ? (
                 <span
                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-secondary group-hover:border-brand-emerald/40 transition-colors"
                   title={`${project.github_repos.length} Repositories (Mobile, Backend, Frontend)`}
@@ -181,6 +200,21 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
         ))}
       </div>
 
+      {/* Global Confidentiality Disclaimer Banner under grid */}
+      <div className="mt-10 p-4 sm:p-5 rounded-2xl glass-card border border-surface-border flex flex-col sm:flex-row items-start sm:items-center gap-3.5 text-xs font-mono text-text-muted">
+        <div className="p-2.5 rounded-xl bg-surface border border-surface-border text-amber-400 shrink-0">
+          <Lock size={18} />
+        </div>
+        <div className="space-y-0.5 leading-relaxed">
+          <span className="text-text-primary font-semibold block sm:inline mr-1.5">
+            Notice on Enterprise Projects &amp; Confidentiality (NDA):
+          </span>
+          <span>
+            Beberapa projek korporat atau magang dikembangkan di bawah perjanjian kerahasiaan (*Non-Disclosure Agreement*). Akses repositori dan data sensitif dilindungi secara privat, namun arsitektur teknis, implementasi sistem, dan hasil kerja yang telah disanitasi dapat dipresentasikan di atas.
+          </span>
+        </div>
+      </div>
+
       {/* Project Detail Modal */}
       {selectedProject && (
         <div 
@@ -198,6 +232,12 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                   <span className="px-2.5 py-0.5 rounded badge-emerald text-[11px] font-mono">
                     {selectedProject.category}
                   </span>
+                  {selectedProject.is_private && (
+                    <span className="px-2.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-[11px] font-mono text-amber-400 flex items-center gap-1">
+                      <Lock size={11} />
+                      <span>NDA / Private Enterprise</span>
+                    </span>
+                  )}
                   {selectedProject.metrics && (
                     <span className="text-[11px] font-mono text-brand-amber">
                       • {selectedProject.metrics}
@@ -307,6 +347,20 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                 </div>
               )}
 
+              {/* Confidentiality & NDA Notice Box */}
+              {selectedProject.is_private && (
+                <div className="p-4 sm:p-5 rounded-xl bg-amber-500/5 border border-amber-500/25 space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-mono font-semibold text-amber-400">
+                    <Lock size={14} />
+                    <span>CONFIDENTIALITY &amp; NDA NOTICE</span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-text-secondary leading-relaxed">
+                    {selectedProject.confidentiality_note ||
+                      'Projek ini dikembangkan sebagai sistem korporat internal / client dengan perlindungan kerahasiaan (Non-Disclosure Agreement). Akses repositori dan data sensitif dilindungi secara privat, namun arsitektur teknis, implementasi sistem, dan hasil kerja yang telah disanitasi dapat dipresentasikan di atas.'}
+                  </p>
+                </div>
+              )}
+
               {/* Core Technologies & Architecture */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2 text-xs font-mono font-semibold text-text-muted uppercase tracking-wider">
@@ -373,7 +427,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
               </div>
 
               {/* Multi-Repository Showcase Section */}
-              {((selectedProject.github_repos && selectedProject.github_repos.length > 0) || selectedProject.github_url) && (
+              {((selectedProject.github_repos && selectedProject.github_repos.length > 0) || selectedProject.github_url) ? (
                 <div className="space-y-3 pt-4 border-t border-surface-border">
                   <div className="flex items-center gap-2 text-xs font-mono font-semibold text-text-muted uppercase tracking-wider">
                     <Github size={14} className="text-brand-emerald" />
@@ -433,7 +487,25 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                     )}
                   </div>
                 </div>
-              )}
+              ) : selectedProject.is_private ? (
+                <div className="space-y-3 pt-4 border-t border-surface-border">
+                  <div className="flex items-center gap-2 text-xs font-mono font-semibold text-text-muted uppercase tracking-wider">
+                    <Github size={14} className="text-brand-emerald" />
+                    <span>Source Code Access</span>
+                  </div>
+                  <div className="p-4 rounded-xl bg-surface border border-surface-border flex items-start gap-3.5">
+                    <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 shrink-0 mt-0.5">
+                      <Lock size={16} />
+                    </div>
+                    <div className="space-y-1 text-xs font-mono">
+                      <div className="text-text-primary font-semibold">Repository Access Restricted (Private / NDA)</div>
+                      <div className="text-text-secondary leading-relaxed">
+                        Akses repositori kode dan server database bersifat privat untuk internal organisasi. Detail arsitektur dan komponen inti telah dirangkum pada case study di atas.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
 
               {/* Footer Modal Action */}
               <div className="pt-6 border-t border-surface-border flex flex-wrap items-center justify-between gap-4">
