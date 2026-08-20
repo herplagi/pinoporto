@@ -291,7 +291,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
 
             <div className="p-6 sm:p-8 space-y-8">
               {/* Image Proof Gallery */}
-              {((selectedProject.screenshots && selectedProject.screenshots.length > 0) || selectedProject.image_url) && {
+              {((selectedProject.screenshots && selectedProject.screenshots.length > 0) || selectedProject.image_url) && (() => {
                 const currentImg =
                   selectedProject.screenshots?.[activeImageIdx] ||
                   selectedProject.image_url ||
@@ -363,7 +363,7 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                     )}
                   </div>
                 );
-              }()}
+              })()}
 
               {/* Background & Context Section */}
               {selectedProject.background && (
