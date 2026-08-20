@@ -88,11 +88,7 @@ export default function AdminProjectsPage() {
       screenshots: '',
       live_url: '',
       github_url: '',
-      github_repos: [
-        { label: 'Mobile App (React Native)', url: 'https://github.com/alvinoalbas' },
-        { label: 'Web Admin Dashboard (React.js)', url: 'https://github.com/alvinoalbas' },
-        { label: 'Backend REST API (Express.js)', url: 'https://github.com/alvinoalbas' },
-      ],
+      github_repos: [],
       featured: true,
       is_private: false,
       confidentiality_note: '',
@@ -218,8 +214,8 @@ export default function AdminProjectsPage() {
     e.preventDefault();
     setSaving(true);
 
-    const validRepos = form.github_repos.filter((r) => r.url.trim().length > 0);
-    const primaryGithubUrl = validRepos[0]?.url || form.github_url || null;
+    const validRepos = form.github_repos.filter((r) => r.url && r.url.trim().length > 0);
+    const primaryGithubUrl = validRepos.length > 0 ? validRepos[0].url.trim() : null;
 
     const projectPayload = {
       title: form.title,
@@ -237,7 +233,7 @@ export default function AdminProjectsPage() {
       screenshots: form.screenshots.split('\n').map((t) => t.trim()).filter(Boolean),
       live_url: form.live_url || null,
       github_url: primaryGithubUrl,
-      github_repos: validRepos.length > 0 ? validRepos : null,
+      github_repos: validRepos.length > 0 ? validRepos : [],
       featured: form.featured,
       is_private: form.is_private,
       confidentiality_note: form.is_private ? (form.confidentiality_note || null) : null,
