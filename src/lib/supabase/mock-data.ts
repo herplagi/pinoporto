@@ -40,6 +40,7 @@ export const initialProjects: Project[] = [
       'Analisis dan optimasi alur bisnis menggunakan standar notasi BPMN'
     ],
     metrics: 'React Native & Web Dashboard',
+    status: 'Completed',
     featured: true,
     image_url: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=900&q=80',
     screenshots: [
@@ -78,6 +79,7 @@ export const initialProjects: Project[] = [
       'Sistem logging untuk memastikan keandalan pemrosesan foto selama event berlangsung'
     ],
     metrics: 'High-reliability event photo management',
+    status: 'Completed',
     featured: true,
     image_url: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=900&q=80',
     screenshots: [
@@ -113,6 +115,7 @@ export const initialProjects: Project[] = [
       'Dashboard rekapitulasi data absensi dan izin untuk tim HR & IT'
     ],
     metrics: 'Enterprise Leave Portal',
+    status: 'Completed',
     featured: true,
     is_private: true,
     confidentiality_note: 'Dikembangkan sebagai sistem korporat internal di PT Semen Padang (SIG Group). Akses source code dan skema internal dilindungi perjanjian kerahasiaan (NDA).',
@@ -148,6 +151,7 @@ export const initialProjects: Project[] = [
       'Kompatibilitas penuh untuk Android dan iOS'
     ],
     metrics: 'Android & iOS Ready',
+    status: 'In Progress',
     featured: false,
     image_url: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=900&q=80',
     screenshots: [

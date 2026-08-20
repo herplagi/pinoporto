@@ -40,6 +40,7 @@ export default function AdminProjectsPage() {
     core_tech: '',
     key_features: '',
     metrics: '',
+    status: 'Completed',
     image_url: '',
     screenshots: '',
     live_url: '',
@@ -82,6 +83,7 @@ export default function AdminProjectsPage() {
       core_tech: 'React Native (Mobile App)\nExpress.js (Backend API)\nMySQL (Database)',
       key_features: 'Sistem booking real-time\nDashboard admin web terintegrasi\nAutentikasi aman JWT',
       metrics: '',
+      status: 'Completed',
       image_url: '',
       screenshots: '',
       live_url: '',
@@ -121,6 +123,7 @@ export default function AdminProjectsPage() {
       core_tech: (proj.core_tech || []).join('\n'),
       key_features: (proj.key_features || []).join('\n'),
       metrics: proj.metrics || '',
+      status: proj.status || 'Completed',
       image_url: proj.image_url || '',
       screenshots: (proj.screenshots || []).join('\n'),
       live_url: proj.live_url || '',
@@ -229,6 +232,7 @@ export default function AdminProjectsPage() {
       core_tech: form.core_tech.split('\n').map((t) => t.trim()).filter(Boolean),
       key_features: form.key_features.split('\n').map((t) => t.trim()).filter(Boolean),
       metrics: form.metrics || null,
+      status: form.status,
       image_url: form.image_url || null,
       screenshots: form.screenshots.split('\n').map((t) => t.trim()).filter(Boolean),
       live_url: form.live_url || null,
@@ -376,6 +380,21 @@ export default function AdminProjectsPage() {
                       <span>Featured</span>
                     </span>
                   )}
+                  {proj.status === 'In Progress' ? (
+                    <span className="px-2 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-[10px] font-mono flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                      <span>In Progress</span>
+                    </span>
+                  ) : proj.status === 'Maintenance' ? (
+                    <span className="px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/30 text-purple-400 text-[10px] font-mono flex items-center gap-1">
+                      <span>⚙ Maintenance</span>
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-mono flex items-center gap-1">
+                      <Check size={10} />
+                      <span>Completed</span>
+                    </span>
+                  )}
                   {proj.is_private && (
                     <span className="px-2 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-mono flex items-center gap-1">
                       <Lock size={10} />
@@ -482,7 +501,7 @@ export default function AdminProjectsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1">
                   <label className="block text-xs font-mono text-text-muted">
                     Category *
@@ -498,6 +517,21 @@ export default function AdminProjectsPage() {
                     <option value="Mobile">Mobile</option>
                     <option value="Backend">Backend</option>
                     <option value="Frontend">Frontend</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-xs font-mono text-text-muted">
+                    Progress / Status *
+                  </label>
+                  <select
+                    value={form.status}
+                    onChange={(e) => setForm({ ...form, status: e.target.value })}
+                    className="w-full px-3 py-2 rounded-lg bg-surface-hover border border-surface-border text-xs font-mono text-text-primary focus:outline-none focus:border-brand-emerald"
+                  >
+                    <option value="Completed">✓ Completed (Selesai)</option>
+                    <option value="In Progress">⚡ In Progress (Dalam Pengembangan)</option>
+                    <option value="Maintenance">⚙ Maintenance (Pemeliharaan)</option>
                   </select>
                 </div>
 

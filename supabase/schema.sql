@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS public.projects (
   core_tech TEXT[] DEFAULT '{}',
   key_features TEXT[] DEFAULT '{}',
   metrics TEXT,
+  status TEXT DEFAULT 'Completed',
   featured BOOLEAN DEFAULT false,
   is_private BOOLEAN DEFAULT false,
   confidentiality_note TEXT,

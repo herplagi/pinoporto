@@ -99,11 +99,27 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/20 to-transparent" />
                   
-                  {/* Category Pill on Image */}
-                  <div className="absolute top-3 left-3 flex items-center gap-2">
-                    <span className="px-2.5 py-1 rounded-md bg-background/80 backdrop-blur-md border border-surface-border text-[11px] font-mono text-text-primary">
+                  {/* Category & Status Pill on Image */}
+                  <div className="absolute top-3 left-3 flex flex-wrap items-center gap-1.5">
+                    <span className="px-2.5 py-1 rounded-md bg-background/85 backdrop-blur-md border border-surface-border text-[11px] font-mono text-text-primary">
                       {project.category}
                     </span>
+
+                    {project.status === 'In Progress' ? (
+                      <span className="px-2 py-1 rounded-md bg-cyan-950/85 backdrop-blur-md border border-cyan-500/40 text-[10px] font-mono text-cyan-300 font-semibold flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                        <span>In Progress</span>
+                      </span>
+                    ) : project.status === 'Maintenance' ? (
+                      <span className="px-2 py-1 rounded-md bg-purple-950/85 backdrop-blur-md border border-purple-500/40 text-[10px] font-mono text-purple-300 font-semibold flex items-center gap-1">
+                        <span>⚙ Maintenance</span>
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 rounded-md bg-emerald-950/85 backdrop-blur-md border border-emerald-500/40 text-[10px] font-mono text-emerald-300 font-semibold flex items-center gap-1">
+                        <CheckCircle2 size={10} className="text-emerald-400" />
+                        <span>Completed</span>
+                      </span>
+                    )}
                   </div>
 
                   {/* Private / NDA Badge on Image */}
@@ -228,10 +244,25 @@ export default function ProjectsSection({ projects }: ProjectsSectionProps) {
             {/* Modal Header */}
             <div className="sticky top-0 z-20 bg-surface/95 backdrop-blur-md p-6 border-b border-surface-border flex items-start justify-between gap-4">
               <div>
-                <div className="flex items-center gap-2 mb-1">
+                <div className="flex flex-wrap items-center gap-2 mb-1.5">
                   <span className="px-2.5 py-0.5 rounded badge-emerald text-[11px] font-mono">
                     {selectedProject.category}
                   </span>
+                  {selectedProject.status === 'In Progress' ? (
+                    <span className="px-2.5 py-0.5 rounded bg-cyan-500/10 border border-cyan-500/30 text-[11px] font-mono text-cyan-400 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                      <span>In Progress (Tahap Pengembangan)</span>
+                    </span>
+                  ) : selectedProject.status === 'Maintenance' ? (
+                    <span className="px-2.5 py-0.5 rounded bg-purple-500/10 border border-purple-500/30 text-[11px] font-mono text-purple-400 flex items-center gap-1">
+                      <span>⚙ Maintenance &amp; Iteration</span>
+                    </span>
+                  ) : (
+                    <span className="px-2.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-[11px] font-mono text-emerald-400 flex items-center gap-1">
+                      <CheckCircle2 size={11} />
+                      <span>Completed (Selesai)</span>
+                    </span>
+                  )}
                   {selectedProject.is_private && (
                     <span className="px-2.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/30 text-[11px] font-mono text-amber-400 flex items-center gap-1">
                       <Lock size={11} />

@@ -35,6 +35,7 @@ export interface Project {
   core_tech?: string[] | null;
   key_features?: string[] | null;
   metrics?: string | null;
+  status?: 'Completed' | 'In Progress' | 'Maintenance' | string;
   featured: boolean;
   is_private?: boolean;
   confidentiality_note?: string | null;
