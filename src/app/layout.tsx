@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://my-portfolio-omegablue-59.vercel.app/',
+    url: 'https://pinoporto.vercel.app/',
     title: 'Alvino Albas — Full-Stack Web & Mobile Developer',
     description: 'Scalable web and mobile engineering with Laravel, Express.js, React Native, and Flutter.',
     siteName: 'Alvino Albas Portfolio',
