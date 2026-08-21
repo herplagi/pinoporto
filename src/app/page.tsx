@@ -21,7 +21,11 @@ export default async function HomePage() {
 
   return (
     <div className="relative min-h-screen">
-      <Navbar availableForHire={profile.available_for_hire} />
+      <Navbar 
+        availableForHire={profile.available_for_hire} 
+        resumeUrl={profile.resume_url}
+        fullName={profile.full_name}
+      />
       
       <main>
         <HeroSection profile={profile} projectsCount={projects.length} />

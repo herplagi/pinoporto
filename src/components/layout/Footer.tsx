@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Github, Linkedin, Twitter } from 'lucide-react';
+import { Github, Linkedin, Twitter, FileText } from 'lucide-react';
 import { Profile } from '@/types/database';
 
 interface FooterProps {
@@ -14,15 +14,26 @@ export default function Footer({ profile }: FooterProps) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const hasResume = profile.resume_url && profile.resume_url !== '#' && profile.resume_url.trim() !== '';
+
   return (
     <footer className="border-t border-surface-border py-8 mt-16">
       <div className="max-w-7xl mx-auto px-6 md:px-10 flex flex-col sm:flex-row items-center justify-between gap-6">
-        {/* Left: name + copyright */}
-        <div className="flex items-center gap-6 text-sm text-text-muted">
+        {/* Left: name + copyright + links */}
+        <div className="flex items-center gap-5 text-sm text-text-muted flex-wrap">
           <span>© {new Date().getFullYear()} {profile.full_name}</span>
+          <span className="w-1 h-1 rounded-full bg-surface-border" />
+          <Link
+            href="/cv"
+            className="hover:text-text-secondary transition-colors inline-flex items-center gap-1 text-xs font-mono text-text-secondary"
+          >
+            <FileText size={12} className="text-accent" />
+            <span>Curriculum Vitae</span>
+          </Link>
+          <span className="w-1 h-1 rounded-full bg-surface-border" />
           <Link
             href="/admin/login"
-            className="hover:text-text-secondary transition-colors"
+            className="hover:text-text-secondary transition-colors text-xs font-mono"
           >
             Admin
           </Link>
@@ -66,7 +77,7 @@ export default function Footer({ profile }: FooterProps) {
 
           <button
             onClick={scrollToTop}
-            className="text-xs text-text-muted hover:text-text-secondary transition-colors ml-2"
+            className="text-xs text-text-muted hover:text-text-secondary transition-colors ml-2 font-mono"
             aria-label="Scroll to top"
           >
             ↑ Top
